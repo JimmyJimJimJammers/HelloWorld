@@ -10,7 +10,7 @@ behavior Actress
 	double y = 0.0;
 	double z = 0.0;
 
-    //some variables to be used later
+    //these are the index locations of these values in the array R
     int X = 0;
     int Y = 1;
     int Z = 2;
@@ -25,15 +25,18 @@ behavior Actress
     int AVG = 11;
     int RESULTSIZE = 12; // used to encode the result of one worker with an array of doubles
 
-	//take the nth star (using the processed file of stars) our of
-	ArrayList calc(int n, String fileProcessed, int nstar)
+	//take the nth star (using the processed file of stars) and find all of the requested values
+	ArrayList calc(int n, String fileProcessed, int numStar)
     {
-		double[][] starPoints = new double[nstar][3];
+		double[][] starPoints = new double[numStar][3];
 
 		try
         {
+            //get the file that has all the non-duplicate stars
 			BufferedReader inputFile = new BufferedReader(new FileReader(fileProcessed));
-			for (int i = 0; i < nstar; i++)
+
+            //go through every line and gather star locations
+			for (int i = 0; i < numStar; i++)
             {
 				String stringPoints = inputFile.readLine();
 				String[] parts = stringPoints.split(" ");
@@ -50,98 +53,196 @@ behavior Actress
         {
 			standardOutput<-println("[error] Can't open the file " + fileProcessed + " for reading.");
 		}
+
+        //get the locations values of the star we are currently interested in
 		x = starPoints[n][0];
 		y = starPoints[n][1];
 		z = starPoints[n][2];
+
+
 		getMinMax(n, starPoints)@currentContinuation;
 		/*
 			 token t = getMinMax(n, starPoints);
 			 displayResult(t)@
-			 iden(t)@currentContinuation;
+			 returnSelf(t)@currentContinuation;
 			 */
 	}
 
 	/** get the minimum distance and the maximum distance and the average distance from the n-th star to all the other stars */
-	ArrayList getMinMax(int n, double[][] values)
+	ArrayList getMinMax(int n, double[][] starPoints)
     {
-		double[] r = new double[RESULTSIZE];
-		r[X] = r[XMIN] = r[XMAX] = x;
-		r[Y] = r[YMIN] = r[YMAX] = y;
-		r[Z] = r[ZMIN] = r[ZMAX] = z;
-		r[MIN] = Double.MAX_VALUE;
-		r[MAX] = 0.0;
-		r[AVG] = 0.0;
-		reset(r, n, values)@getAvg(token, values.length)@convert2ArrayList(token)@currentContinuation;
+        //make a new list of the values we are interested in
+		double[] returnValues = new double[RESULTSIZE];
+
+        //initialize values to current star location
+		returnValues[X] = returnValues[XMIN] = returnValues[XMAX] = x;
+		returnValues[Y] = returnValues[YMIN] = returnValues[YMAX] = y;
+		returnValues[Z] = returnValues[ZMIN] = returnValues[ZMAX] = z;
+		returnValues[MIN] = Double.MAX_VALUE;
+		returnValues[MAX] = 0.0;
+		returnValues[AVG] = 0.0;
+
+
+        //calculate the min and max to the first star in the list
+        //token tokenReturnValues = findMinMaxAvg1(returnValues, starPoints[0]);
+        for (int i = 0; i < starPoints.length; i++) if (i != n)
+        {
+            //calculate the min and max to the rest of the stars in the list
+            //tokenReturnValues = findMinMaxAvg1(tokenReturnValues, starPoints[i]);
+
+            //get the difference between this current star and the star passed to the method
+            double dx = x-starPoints[i][0];
+            double dy = y-starPoints[i][1];
+            double dz = z-starPoints[i][2];
+
+            //if that difference is not 0
+            if (dx != 0.0 || dy != 0.0 || dz != 0.0)
+            {
+                //calculate the distance between
+                double dis = Math.sqrt(dx*dx+dy*dy+dz*dz);
+
+                //if the distance is smaller than the current minimum then set the new min
+                if (dis < returnValues[MIN])
+                {
+                    returnValues[MIN] = dis;
+                    returnValues[XMIN] = starPoints[i][0];
+                    returnValues[YMIN] = starPoints[i][1];
+                    returnValues[ZMIN] = starPoints[i][2];
+                }
+
+                //if the distance is larger than the current maximum then set the new max
+                if (dis > returnValues[MAX])
+                {
+                    returnValues[MAX] = dis;
+                    returnValues[XMAX] = starPoints[i][0];
+                    returnValues[YMAX] = starPoints[i][1];
+                    returnValues[ZMAX] = starPoints[i][2];
+                }
+
+                //add the distance to the Average
+                returnValues[AVG] += dis;
+            }
+        }
+
+        //return the results via message
+        returnSelf(returnValues)@getAvg(token, starPoints.length)@convert2ArrayList(token)@currentContinuation;
+
+		//findMinMaxAvg(returnValues, n, starPoints)@getAvg(token, starPoints.length)@convert2ArrayList(token)@currentContinuation;
 	}
 
 	ArrayList convert2ArrayList(double[] a)
     {
-		ArrayList r = new ArrayList();
-		for (int i = 0; i < a.length; i++) r.add(a[i]);
-		return r;
+		ArrayList returnValues = new ArrayList();
+		for (int i = 0; i < a.length; i++) returnValues.add(a[i]);
+		return returnValues;
 	}
 
-	/** get the Result object containing the minimum and the maximum distances */
-	double[] reset(double[] r, int n, double[][] values)
+    double[] returnSelf(double[] returnValues)
+    {
+        return returnValues;
+    }
+
+    //r[AVG] is actually the total for quite a while, this divides it by the total number of stars
+    double[] getAvg(double[] returnValues, int tot)
+    {
+        returnValues[AVG] /= tot;
+        return returnValues;
+    }
+
+
+	//goes through each star and looks for min and max distances and stars
+	/*double[] findMinMaxAvg(double[] returnValues, int n, double[][] starPoints)
     {
 
-		token rr = reset1(r, values[0]);
+        //calculate the min and max to the first star in the list
+		//token tokenReturnValues = findMinMaxAvg1(returnValues, starPoints[0]);
 
-		for (int i = 1; i < values.length; i++) if (i != n)
+		for (int i = 0; i < starPoints.length; i++) if (i != n)
         {
-			rr = reset1(rr, values[i]);
+            //calculate the min and max to the rest of the stars in the list
+			//tokenReturnValues = findMinMaxAvg1(tokenReturnValues, starPoints[i]);
+
+            //get the difference between this current star and the star passed to the method
+            double dx = x-starPoints[i][0];
+            double dy = y-starPoints[i][1];
+            double dz = z-starPoints[i][2];
+
+            //if that difference is not 0
+            if (dx != 0.0 || dy != 0.0 || dz != 0.0)
+            {
+                //calculate the distance between
+                double dis = Math.sqrt(dx*dx+dy*dy+dz*dz);
+
+                //if the distance is smaller than the current minimum then set the new min
+                if (dis < returnValues[MIN])
+                {
+                    returnValues[MIN] = dis;
+                    returnValues[XMIN] = starPoints[i][0];
+                    returnValues[YMIN] = starPoints[i][1];
+                    returnValues[ZMIN] = starPoints[i][2];
+                }
+
+                //if the distance is larger than the current maximum then set the new max
+                if (dis > returnValues[MAX])
+                {
+                    returnValues[MAX] = dis;
+                    returnValues[XMAX] = starPoints[i][0];
+                    returnValues[YMAX] = starPoints[i][1];
+                    returnValues[ZMAX] = starPoints[i][2];
+                }
+
+                //add the distance to the Average
+                returnValues[AVG] += dis;
+            }
 		}
 
-		iden(rr)@currentContinuation;
+        //return the results via message
+		returnSelf(returnValues)@currentContinuation;
 
-	}
+	}*/
 
-	/** identity function */
-	double[] iden(double[] r)
+	//this function is necessary because we need it for returning results via the @ notation
+
+
+    //used to find stats on a single star, but I moved it to the upper method.
+	/*double[] findMinMaxAvg1(double[] returnValues, double[] star)
     {
-		return r;
-	}
-
-	/** change the records for minimum and maximum distances for a Result object */
-	double[] reset1(double[] r, double[] star)
-    {
-
+        //get the difference between this current star and the star passed to the method
 		double dx = x-star[0];
 		double dy = y-star[1];
 		double dz = z-star[2];
+
+        //if that difference is not 0
 		if (dx != 0.0 || dy != 0.0 || dz != 0.0)
         {
+            //calculate the distance between
 			double dis = Math.sqrt(dx*dx+dy*dy+dz*dz);
 
-			if (dis < r[MIN])
+            //if the distance is smaller than the current minimum then set the new min
+			if (dis < returnValues[MIN])
             {
-				r[MIN] = dis;
-				r[XMIN] = star[0];
-				r[YMIN] = star[1];
-				r[ZMIN] = star[2];
+				returnValues[MIN] = dis;
+				returnValues[XMIN] = star[0];
+				returnValues[YMIN] = star[1];
+				returnValues[ZMIN] = star[2];
 			}
 
-			if (dis > r[MAX])
+            //if the distance is larger than the current maximum then set the new max
+			if (dis > returnValues[MAX])
             {
-				r[MAX] = dis;
-				r[XMAX] = star[0];
-				r[YMAX] = star[1];
-				r[ZMAX] = star[2];
+				returnValues[MAX] = dis;
+				returnValues[XMAX] = star[0];
+				returnValues[YMAX] = star[1];
+				returnValues[ZMAX] = star[2];
 			}
 
-			r[AVG] += dis;
+            //add the distance to the Average
+			returnValues[AVG] += dis;
 		}
-		return r;
+		return returnValues;
+	}*/
 
-	}
-
-	double[] getAvg(double[] r, int tot)
-    {
-		r[AVG] /= tot;
-		return r;
-	}
-
-	/** for unit test */
+	//this is what will run if we compile and run this file alone, it tests whether or not the methods work
 	void act(String args[])
     {
 		calc(1, "test.txt", 4)@displayResult(token)@
@@ -149,24 +250,24 @@ behavior Actress
 	}
 
 	/** display the content of a Result object */
-	ArrayList displayResult(ArrayList r)
+	ArrayList displayResult(ArrayList returnValues)
     {
-		double rmin = (Double)r.get(MIN);
-		double rmax = (Double)r.get(MAX);
-		double ravg = (Double)r.get(AVG);
-		double rx = (Double)r.get(X);
-		double ry = (Double)r.get(Y);
-		double rz = (Double)r.get(Z);
-		double rxmin = (Double)r.get(XMIN);
-		double rymin = (Double)r.get(YMIN);
-		double rzmin = (Double)r.get(ZMIN);
-		double rxmax = (Double)r.get(XMAX);
-		double rymax = (Double)r.get(YMAX);
-		double rzmax = (Double)r.get(ZMAX);
+		double rmin = (Double)returnValues.get(MIN);
+		double rmax = (Double)returnValues.get(MAX);
+		double ravg = (Double)returnValues.get(AVG);
+		double rx = (Double)returnValues.get(X);
+		double ry = (Double)returnValues.get(Y);
+		double rz = (Double)returnValues.get(Z);
+		double rxmin = (Double)returnValues.get(XMIN);
+		double rymin = (Double)returnValues.get(YMIN);
+		double rzmin = (Double)returnValues.get(ZMIN);
+		double rxmax = (Double)returnValues.get(XMAX);
+		double rymax = (Double)returnValues.get(YMAX);
+		double rzmax = (Double)returnValues.get(ZMAX);
 
 		standardOutput<-println("\nThe final result for "+rx+" "+ry+" "+rz+" is\nmin distance: "+rmin+"\nfrom "+rxmin+" "+rymin+" "+rzmin+"\nmax distance: "+rmax+"\nfrom "+rxmax+" "+rymax+" "+rzmax+"\navg distance: "+ravg);
 
-		return r;
+		return returnValues;
 	}
 
 }
