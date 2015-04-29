@@ -25,7 +25,7 @@ behavior Actress
     int AVG = 11;
     int RESULTSIZE = 12; // used to encode the result of one worker with an array of doubles
 
-	/** calculate the distances from this star (n-th line, counting from 0) to all the other stars, there are totally nstar lines */
+	//take the nth star (using the processed file of stars) our of
 	Vector calc(int n, String fileProcessed, int nstar)
     {
 		double[][] starPoints = new double[nstar][3];
