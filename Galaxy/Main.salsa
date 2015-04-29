@@ -35,9 +35,12 @@ behavior Main
 	long initialTime;                 // Starting Time
 	String nameServer = "localhost";  // Name Server
 	String theatersFile = "theatersFile.txt";    // File containing the theaters          
-	String dedupFile = "dedup.txt";
-	int nstar;                        // number of different stars
+	String newFile = "newFile.txt";
+	int numStar;                        // number of different stars
 
+
+	// Change these into map form
+	// use strings for keys 
 	int X = 0;
     int Y = 1;
     int Z = 2;
@@ -59,7 +62,7 @@ behavior Main
 		{
 			standardOutput<-print("WE Made it!");
 			starsFile = argv[0];
-            dedup()@distributeWorkC();
+            removeDuplicates()@distributeWorkC();
 		}
 		else 
 		{
@@ -69,7 +72,7 @@ behavior Main
 				nameServer = argv[1];
 				theatersFile = argv[2];
 			}
-			dedup()@distributeWork();
+			removeDuplicates()@distributeWork();
 		}
 	}
 
@@ -113,40 +116,53 @@ behavior Main
 // }
 
 	/** Deduplicate the stars file, return the name of the deduplicated file */
-	void dedup() {
-		HashSet lineset = new HashSet();
-		try {
+	void removeDuplicates()
+	{
+
+		TreeSet starSet = new TreeSet();
+		try 
+		{
+
 			BufferedReader in = new BufferedReader(new FileReader(starsFile));
 			String star;
             star = in.readLine();
-			while ((star = in.readLine()) != null) if (!star.equalsIgnoreCase("")) lineset.add(star);
+
+			while ((star = in.readLine()) != null) 
+				if (!star.equalsIgnoreCase("")) 
+					starSet.add(star);
 			in.close();
-		} catch (IOException ioe) {
-			standardOutput<-println("[error] Can't open the file " + starsFile + " for reading.");
+		} 
+		catch (IOException ioe) 
+		{
+			standardOutput<-print("File Error: " + starsFile + "\n");
 		}
 
-		try {
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(dedupFile)));
-			for (Iterator i = lineset.iterator(); i.hasNext(); ) out.println((String)i.next());
+		try 
+		{
+			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(newFile)));
+			for (Iterator i = starSet.iterator(); i.hasNext(); ) 
+				out.println((String)i.next());
 			out.close();
-		} catch (IOException ioe) {
-			standardOutput<-println("[error] Can't write to file " + dedupFile);
+		} 
+		catch (IOException ioe) 
+		{
+			standardOutput<-print("File Error: " + newFile + "\n");
 		}
 
-		nstar = lineset.size();
+		numStar = starSet.size();
 	}
 
 	/** Distribute to the Actresses based on the deduplicated stars file for distributed computation */
 	void distributeWork() {
 
 		//create Actresses and assign data
-		Actress[] Actresses = new Actress[nstar];
-		for (int i = 0; i < nstar; i++) {                                   
+		Actress[] Actresses = new Actress[numStar];
+		for (int i = 0; i < numStar; i++) {                                   
 			Actresses[i] = new Actress();
 		}
 
 		// read available theaters
-		Vector theaters = new Vector();
+		ArrayList theaters = new ArrayList();
 		String theater;
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(theatersFile));
@@ -159,7 +175,7 @@ behavior Main
 		}
 
 		// migrate Actresses to theaters
-		for (int i = 0; i < nstar; i++) {
+		for (int i = 0; i < numStar; i++) {
 			standardOutput<-println("Sending actor "+
 					"uan://"+nameServer+":3030/a"+i+" to "+
 					"rmsp://"+theaters.get(i%theaters.size())+"/a"+i);
@@ -174,8 +190,8 @@ behavior Main
 		standardOutput<-println(">>>>>>Starting the computation");
 		initialTime = System.currentTimeMillis();
 		join {
-			for (int i = 0; i < nstar; i++) {
-				Actresses[i]<-calc(i, dedupFile, nstar);
+			for (int i = 0; i < numStar; i++) {
+				Actresses[i]<-calc(i, newFile, numStar);
 			}
 		}@summarize(token);
 	}
@@ -184,8 +200,8 @@ behavior Main
 	void distributeWorkC() {
 
 		//create Actresses and assign data
-		Actress[] Actresses = new Actress[nstar];
-		for (int i = 0; i < nstar; i++) {                                   
+		Actress[] Actresses = new Actress[numStar];
+		for (int i = 0; i < numStar; i++) {                                   
 			Actresses[i] = new Actress();
 		}
 
@@ -193,8 +209,8 @@ behavior Main
 		standardOutput<-println(">>>>>>Starting the computation");
 		initialTime = System.currentTimeMillis();
 		join {
-			for (int i = 0; i < nstar; i++) {
-				Actresses[i]<-calc(i, dedupFile, nstar);
+			for (int i = 0; i < numStar; i++) {
+				Actresses[i]<-calc(i, newFile, numStar);
 			}
 		}@summarize(token);
 	}
@@ -209,35 +225,35 @@ behavior Main
 	void summarize(Object[] results) {
 
 		double cndis = Double.MAX_VALUE; // closest neighbour distance
-		Vector[] cn = new Vector[6]; // closest neighbour pairs
-		for (int i = 0; i < 6; i++) cn[i] = new Vector();
+		ArrayList[] cn = new ArrayList[6]; // closest neighbour pairs
+		for (int i = 0; i < 6; i++) cn[i] = new ArrayList();
 		double fndis = 0.0; // farthest neighbour distance
-		Vector[] fn = new Vector[6]; // farthest neighbour pairs
-		for (int i = 0; i < 6; i++) fn[i] = new Vector();
+		ArrayList[] fn = new ArrayList[6]; // farthest neighbour pairs
+		for (int i = 0; i < 6; i++) fn[i] = new ArrayList();
 		double minmaxdis = Double.MAX_VALUE; // minimum max distance
-		Vector[] ihs = new Vector[6]; // ideal hub stars
-		for (int i = 0; i < 6; i++) ihs[i] = new Vector();
+		ArrayList[] ihs = new ArrayList[6]; // ideal hub stars
+		for (int i = 0; i < 6; i++) ihs[i] = new ArrayList();
 		double maxmindis = 0.0; // maximum min distance
-		Vector[] ijs = new Vector[6]; // ideal jail stars
-		for (int i = 0; i < 6; i++) ijs[i] = new Vector();
+		ArrayList[] ijs = new ArrayList[6]; // ideal jail stars
+		for (int i = 0; i < 6; i++) ijs[i] = new ArrayList();
 		double minavgdis = Double.MAX_VALUE; // minimum average distance
-		Vector[] ics = new Vector[3]; // ideal capital stars
-		for (int i = 0; i < 3; i++) ics[i] = new Vector();
+		ArrayList[] ics = new ArrayList[3]; // ideal capital stars
+		for (int i = 0; i < 3; i++) ics[i] = new ArrayList();
 
 		//standardOutput<-println("summing...");
-		for (int i = 0; i < nstar; i++){
-			double rmin = (Double)((Vector)results[i]).get(MIN);
-			double rmax = (Double)((Vector)results[i]).get(MAX);
-			double ravg = (Double)((Vector)results[i]).get(AVG);
-			double rx = (Double)((Vector)results[i]).get(X);
-			double ry = (Double)((Vector)results[i]).get(Y);
-			double rz = (Double)((Vector)results[i]).get(Z);
-			double rxmin = (Double)((Vector)results[i]).get(XMIN);
-			double rymin = (Double)((Vector)results[i]).get(YMIN);
-			double rzmin = (Double)((Vector)results[i]).get(ZMIN);
-			double rxmax = (Double)((Vector)results[i]).get(XMAX);
-			double rymax = (Double)((Vector)results[i]).get(YMAX);
-			double rzmax = (Double)((Vector)results[i]).get(ZMAX);
+		for (int i = 0; i < numStar; i++){
+			double rmin = (Double)((ArrayList)results[i]).get(MIN);
+			double rmax = (Double)((ArrayList)results[i]).get(MAX);
+			double ravg = (Double)((ArrayList)results[i]).get(AVG);
+			double rx = (Double)((ArrayList)results[i]).get(X);
+			double ry = (Double)((ArrayList)results[i]).get(Y);
+			double rz = (Double)((ArrayList)results[i]).get(Z);
+			double rxmin = (Double)((ArrayList)results[i]).get(XMIN);
+			double rymin = (Double)((ArrayList)results[i]).get(YMIN);
+			double rzmin = (Double)((ArrayList)results[i]).get(ZMIN);
+			double rxmax = (Double)((ArrayList)results[i]).get(XMAX);
+			double rymax = (Double)((ArrayList)results[i]).get(YMAX);
+			double rzmax = (Double)((ArrayList)results[i]).get(ZMAX);
 			//standardOutput<-println(rmin+" "+rmax+" "+ravg+" "+rx+" "+ry+" "+rz);
 
 			if (rmin < cndis) {
@@ -328,25 +344,25 @@ behavior Main
 		token cndedup = dedupPair(cn);
 		token fndedup = dedupPair(fn);
 
-		standardOutput<-println("Stars file: "+starsFile+"\nnumber of stars: "+nstar+"\n\nminimal pairwise distance: "+cndis)@
-		outputVector(cndedup)@
+		standardOutput<-println("Stars file: "+starsFile+"\nnumber of stars: "+numStar+"\n\nminimal pairwise distance: "+cndis)@
+		outputArrayList(cndedup)@
 		standardOutput<-println(token)@
 		standardOutput<-println("maximal pairwise distance: "+fndis)@
-		outputVector(fndedup)@
+		outputArrayList(fndedup)@
 		standardOutput<-println(token)@
 		standardOutput<-println("minimum maximal distance: "+minmaxdis)@
-		outputVector(ihs)@
+		outputArrayList(ihs)@
 		standardOutput<-println(token)@
 		standardOutput<-println("maximum minimal distance: "+maxmindis)@
-		outputVector(ijs)@
+		outputArrayList(ijs)@
 		standardOutput<-println(token)@
 		standardOutput<-println("minimal average distance: "+minavgdis)@
-		outputVector(ics)@
+		outputArrayList(ics)@
 		standardOutput<-println(token)@
 		endTimer();
 	}
 
-	Vector[] dedupPair(Vector[] pairs) {
+	ArrayList[] dedupPair(ArrayList[] pairs) {
 		for (int i = 1; i < pairs[0].size(); ) {
 			boolean removed = false;
 			for (int j = 0; j < i; j++) {
@@ -373,7 +389,7 @@ behavior Main
 		return pairs;
 	}
 
-	String outputVector(Vector[] list) {
+	String outputArrayList(ArrayList[] list) {
 		join {
 			for (int i = 0; i < list[0].size(); i++) outputColumn(list, i);
 		}@concat(token)@currentContinuation;
@@ -385,7 +401,7 @@ behavior Main
 		return ret;
 	}
 
-	String outputColumn(Vector[] list, int col) {
+	String outputColumn(ArrayList[] list, int col) {
 		String ret = "<";
 		for (int i = 0; i < list.length; i++) {
 			ret += list[i].get(col);
