@@ -296,7 +296,6 @@ behavior Main
 				ics[1].add(ry);
 				ics[2].add(rz);
 			}
-
 		}
 
 		token cndedup = dedupPair(cn);

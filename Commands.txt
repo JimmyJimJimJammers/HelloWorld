@@ -7,3 +7,9 @@ java -cp salsa1.1.5.jar:. sky.Analyzer sky/Smallestest.txt -c
 java -cp salsa1.1.5.jar:. salsac.SalsaCompiler Galaxy/*.salsa
 javac -cp salsa1.1.5.jar:. Galaxy/*.java
 java -cp salsa1.1.5.jar:. Galaxy.Main Galaxy/Smallestest.txt -c
+
+
+git add Galaxy/Actress.salsa Galaxy/Main.salsa Commands.txt
+git commit -m “UF”
+git pull
+git push
