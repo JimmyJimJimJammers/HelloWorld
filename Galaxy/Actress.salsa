@@ -26,7 +26,7 @@ behavior Actress
     int RESULTSIZE = 12; // used to encode the result of one worker with an array of doubles
 
 	//take the nth star (using the processed file of stars) our of
-	Vector calc(int n, String fileProcessed, int nstar)
+	ArrayList calc(int n, String fileProcessed, int nstar)
     {
 		double[][] starPoints = new double[nstar][3];
 
@@ -62,7 +62,7 @@ behavior Actress
 	}
 
 	/** get the minimum distance and the maximum distance and the average distance from the n-th star to all the other stars */
-	Vector getMinMax(int n, double[][] values)
+	ArrayList getMinMax(int n, double[][] values)
     {
 		double[] r = new double[RESULTSIZE];
 		r[X] = r[XMIN] = r[XMAX] = x;
@@ -71,12 +71,12 @@ behavior Actress
 		r[MIN] = Double.MAX_VALUE;
 		r[MAX] = 0.0;
 		r[AVG] = 0.0;
-		reset(r, n, values)@getAvg(token, values.length)@convert2vector(token)@currentContinuation;
+		reset(r, n, values)@getAvg(token, values.length)@convert2ArrayList(token)@currentContinuation;
 	}
 
-	Vector convert2vector(double[] a)
+	ArrayList convert2ArrayList(double[] a)
     {
-		Vector r = new Vector();
+		ArrayList r = new ArrayList();
 		for (int i = 0; i < a.length; i++) r.add(a[i]);
 		return r;
 	}
@@ -149,7 +149,7 @@ behavior Actress
 	}
 
 	/** display the content of a Result object */
-	Vector displayResult(Vector r)
+	ArrayList displayResult(ArrayList r)
     {
 		double rmin = (Double)r.get(MIN);
 		double rmax = (Double)r.get(MAX);
