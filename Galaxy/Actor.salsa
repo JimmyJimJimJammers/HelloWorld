@@ -5,10 +5,12 @@ import java.util.*;
 // this handles all of the parallelization
 behavior Actor
 {
+    //the location of this actors star
 	double x = 0.0;
 	double y = 0.0;
 	double z = 0.0;
 
+    //some variables to be used later
     int X = 0;
     int Y = 1;
     int Z = 2;
