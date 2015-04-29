@@ -42,18 +42,12 @@ behavior Main
 
 	void act(String [] argv) 
 	{
-		if (argv.length <= 1 )
+		if (argv[argv.length -1] "--concurrent" || argv[1] =="-c")
 		{
-			dedup()@distributeWork();
+			starsFile = argv[argv.length-2];
+			dedup@distributeWorkC()
 		}
-		else if (argv.length == 2)
-		{
-			if (argv[1] == "--concurrent" || argv[1] =="-c")
-			{
-				starsFile = argv[0]
-				dedup@distributeWorkC()
-			}
-		else if (argv.length == 3)
+		else 
 		{
 			starsFile = argv[0];
 			nameServer = argv[1];
