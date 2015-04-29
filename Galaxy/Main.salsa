@@ -32,13 +32,25 @@ import java.util.*;
 behavior Main 
 {
 	String starsFile = "test.txt";    // Stars file
-	long initialTime;    // Starting Time
-	String nameServer = "localhost";        // Name Server
+	long initialTime;                 // Starting Time
+	String nameServer = "localhost";  // Name Server
 	String theatersFile = "theatersFile.txt";    // File containing the theaters          
 	String dedupFile = "dedup.txt";
-	int nstar; // number of different stars
+	int nstar;                        // number of different stars
 
-	int X = 0, Y = 1, Z = 2, MIN = 3, MAX = 4, XMIN = 5, YMIN = 6, ZMIN = 7, XMAX = 8, YMAX = 9, ZMAX = 10, AVG = 11, RESULTSIZE = 12; // used to encode the result of one actor with an array of doubles
+	int X = 0;
+    int Y = 1;
+    int Z = 2;
+    int MIN = 3;
+    int MAX = 4;
+    int XMIN = 5;
+    int YMIN = 6;
+    int ZMIN = 7;
+    int XMAX = 8;
+    int YMAX = 9;
+    int ZMAX = 10;
+    int AVG = 11;
+    int RESULTSIZE = 12; // used to encode the result of one actor with an array of doubles
 
 	/*void act(String [] argv)
 	{
