@@ -9,7 +9,7 @@ import java.util.*;
  *    1.  starsFile.txt, a stars text file with the first line giving the total number of stars in the file 
  *        followed by one line per star representing each star's three dimensions <x,y,z> as X Y Z. 
  *    2.  n, number of Actresses.
- *    3.  nameServer, the name server
+ *    3.  serverName, the name server
  *    4.  theatersFile.txt, a file containing theater locations
  *
  * Output:  
@@ -32,8 +32,8 @@ import java.util.*;
 behavior Main 
 {
 	String starsFile = "test.txt";    // Stars file
-	long initialTime;                 // Starting Time
-	String nameServer = "localhost";  // Name Server
+	long startTime = 0;                 // Starting Time
+	String serverName = "localhost";  // Name Server
 	String theatersFile = "theatersFile.txt";    // File containing the theaters          
 	String newFile = "newFile.txt";
 	int numStar;                        // number of different stars
@@ -62,58 +62,20 @@ behavior Main
 		{
 			standardOutput<-print("WE Made it!");
 			starsFile = argv[0];
-            removeDuplicates()@distributeWorkC();
+            removeDuplicates()@SendtoActressesC();
 		}
 		else 
 		{
 			if (argv.length == 3) 
 			{
 				starsFile = argv[0];
-				nameServer = argv[1];
+				serverName = argv[1];
 				theatersFile = argv[2];
 			}
-			removeDuplicates()@distributeWork();
+			removeDuplicates()@SendtoActresses();
 		}
 	}
 
-    /*void act(String args[])
-    {
-        if (args.length >= 1)
-        {
-            String lastarg = args[args.length-1];
-            if (lastarg.equalsIgnoreCase("--concurrent") || lastarg.equalsIgnoreCase("-c"))
-            {
-                String[] nargs = new String[args.length-1];
-                for (int i = 0; i < nargs.length; i++) nargs[i] = args[i];
-                cact(nargs);
-            }
-            else
-            {
-                dact(args);
-            }
-        }
-        else
-        {
-            dact(args);
-        }
-    }
-
-    // concurrent
-    void cact(String args[]) {
-    int argc = args.length;
-    if (argc >= 1) starsFile = args[0];
-    dedup()@distributeWorkC();
-    }
-
-    // distributed
-    void dact(String args[]) {
-    int argc = args.length;
-    if(argc >= 1) starsFile = args[0];
-    if(argc >= 2) nameServer = args[1];
-    if(argc >= 3) theatersFile = args[2];*/
-
-//     dedup()@distributeWork();
-// }
 
 	/** Deduplicate the stars file, return the name of the deduplicated file */
 	void removeDuplicates()
@@ -123,14 +85,14 @@ behavior Main
 		try 
 		{
 
-			BufferedReader in = new BufferedReader(new FileReader(starsFile));
-			String star;
-            star = in.readLine();
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(starsFile));
+			String tempStar;
+            tempStar = bufferedReader.readLine();
 
-			while ((star = in.readLine()) != null) 
-				if (!star.equalsIgnoreCase("")) 
-					starSet.add(star);
-			in.close();
+			while ((tempStar = bufferedReader.readLine()) != null) 
+				if (!tempStar.equalsIgnoreCase("")) 
+					starSet.add(tempStar);
+			bufferedReader.close();
 		} 
 		catch (IOException ioe) 
 		{
@@ -139,87 +101,103 @@ behavior Main
 
 		try 
 		{
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(newFile)));
-			for (Iterator i = starSet.iterator(); i.hasNext(); ) 
-				out.println((String)i.next());
-			out.close();
+			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(newFile)));
+			Iterator itr = starSet.iterator(); 
+			while(itr.hasNext()) 
+				writer.println((String)itr.next());
+			writer.close();
 		} 
 		catch (IOException ioe) 
 		{
 			standardOutput<-print("File Error: " + newFile + "\n");
 		}
-
 		numStar = starSet.size();
 	}
 
 	/** Distribute to the Actresses based on the deduplicated stars file for distributed computation */
-	void distributeWork() {
+	void SendtoActresses() {
 
 		//create Actresses and assign data
 		Actress[] Actresses = new Actress[numStar];
-		for (int i = 0; i < numStar; i++) {                                   
-			Actresses[i] = new Actress();
-		}
-
-		// read available theaters
 		ArrayList theaters = new ArrayList();
 		String theater;
-		try {
-			BufferedReader in = new BufferedReader(new FileReader(theatersFile));
-			while ((theater = in.readLine()) != null) {
+		int i = 0;
+		while( i < numStar)
+		{                                   	// first create actresses
+			Actresses[i] = new Actress();
+			i++;
+		}
+
+
+		try {															// try to find theaters
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(theatersFile));
+			while ((theater = bufferedReader.readLine()) != null) {
 				theaters.add(theater);
 			}
-			in.close(); 
-		} catch (IOException ioe) {
-			standardOutput<-println("[error] Can't open the file " + theatersFile + " for reading.");
+			bufferedReader.close(); 
+		} catch (IOException ioe){
+			standardOutput<-println("File Error: " + theatersFile);
 		}
 
 		// migrate Actresses to theaters
-		for (int i = 0; i < numStar; i++) {
-			standardOutput<-println("Sending actor "+
-					"uan://"+nameServer+":3030/a"+i+" to "+
-					"rmsp://"+theaters.get(i%theaters.size())+"/a"+i);
+		int looper = 0;                                    // ************************COME BACK TO HERE *********************
+		int x = 0;
+		while (looper < numStar)
+		{
+			if (x == theaters.size())
+				x = 0;
+			standardOutput<-print("Sending Actress uan://" + serverName + ":3030/a"+ x +" to rmsp://" +theaters.get(x)+"/a"+x + "\n");
 
-			Actresses[i] = new Actress() at  
-				(new UAN("uan://"+nameServer+":3030/a"+i), 
-				 new UAL("rmsp://"+theaters.get(i%theaters.size())+"/a"+i)
-				);
+			Actresses[x] = new Actress() at  (new UAN("uan://"+serverName+":3030/a"+x), new UAL("rmsp://"+theaters.get(x)+"/a"+x));
+			x++;
 		}
-
-		//start computation
-		standardOutput<-println(">>>>>>Starting the computation");
-		initialTime = System.currentTimeMillis();
-		join {
-			for (int i = 0; i < numStar; i++) {
-				Actresses[i]<-calc(i, newFile, numStar);
+		
+		standardOutput<-print("Program Start: \n");
+		startTime = System.currentTimeMillis();
+		
+		//start computation using join method
+		join 
+		{
+			int t =0;
+			while(t < numStar)
+			 {
+				Actresses[t]<-calc(t, newFile, numStar);
+				t++;
 			}
 		}@summarize(token);
 	}
 
-	/** Distribute to the Actresses based on the deduplicated stars file for concurrent computation*/
-	void distributeWorkC() {
+	//Concurrent version
+	void SendtoActressesC() {
 
 		//create Actresses and assign data
 		Actress[] Actresses = new Actress[numStar];
-		for (int i = 0; i < numStar; i++) {                                   
-			Actresses[i] = new Actress();
+		int t =0;
+		while (t < numStar)
+		{                                
+			Actresses[t] = new Actress();
+			t++;
 		}
 
-		//start computation
-		standardOutput<-println(">>>>>>Starting the computation");
-		initialTime = System.currentTimeMillis();
-		join {
-			for (int i = 0; i < numStar; i++) {
-				Actresses[i]<-calc(i, newFile, numStar);
+		
+		startTime = System.currentTimeMillis();
+		standardOutput<-print("Program Start: \n");	
+
+		join 																// Starting the computation
+		{
+			int x = 0;
+			while(x < numStar)
+			{
+				Actresses[x]<-calc(x, newFile, numStar);
+				x++;
 			}
 		}@summarize(token);
 	}
 
 	void endTimer(){
-		long finalTime = System.currentTimeMillis();
-		long runningTime = finalTime - initialTime;
-		standardOutput<-println("Running time for star calculation is " + 
-				runningTime+" ms.");
+		long endTime = System.currentTimeMillis();
+		long result = endTime - startTime;
+		standardOutput<-print("Total time: " + result +" ms.\n");
 	}
 
 	void summarize(Object[] results) {
