@@ -52,22 +52,26 @@ behavior Main
     int AVG = 11;
     int RESULTSIZE = 12; // used to encode the result of one actor with an array of doubles
 
-	/*void act(String [] argv)
+	void act(String [] argv)
 	{
-		if (argv[argv.length -1] == "--concurrent" || argv[1] == "-c")
+			
+		if (argv[argv.length-1].equalsIgnoreCase("-c"))
 		{
+			standardOutput<-print("WE Made it!");
 			starsFile = argv[0];
             dedup()@distributeWorkC();
 		}
 		else 
 		{
-			if (argv.length == 3)
+			if (argv.length == 3) 
+			{
 				starsFile = argv[0];
 				nameServer = argv[1];
 				theatersFile = argv[2];
+			}
 			dedup()@distributeWork();
 		}
-	}*/
+	}
 
     /*void act(String args[])
     {
@@ -105,8 +109,8 @@ behavior Main
     if(argc >= 2) nameServer = args[1];
     if(argc >= 3) theatersFile = args[2];*/
 
-    dedup()@distributeWork();
-}
+//     dedup()@distributeWork();
+// }
 
 	/** Deduplicate the stars file, return the name of the deduplicated file */
 	void dedup() {
