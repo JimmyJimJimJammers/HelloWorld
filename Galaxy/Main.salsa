@@ -8,7 +8,7 @@ import java.util.*;
  * Input: 
  *    1.  starsFile.txt, a stars text file with the first line giving the total number of stars in the file 
  *        followed by one line per star representing each star's three dimensions <x,y,z> as X Y Z. 
- *    2.  n, number of actors.
+ *    2.  n, number of Actresses.
  *    3.  nameServer, the name server
  *    4.  theatersFile.txt, a file containing theater locations
  *
@@ -42,10 +42,10 @@ behavior Main
 
 	void act(String [] argv) 
 	{
-		if (argv[argv.length -1] "--concurrent" || argv[1] =="-c")
+		if (argv[argv.length -1] == "--concurrent" || argv[1] == "-c")
 		{
-			starsFile = argv[argv.length-2];
-			dedup@distributeWorkC()
+			starsFile = argv[0];
+            dedup()@distributeWorkC();
 		}
 		else 
 		{
@@ -109,13 +109,13 @@ behavior Main
 		nstar = lineset.size();
 	}
 
-	/** Distribute to the actors based on the deduplicated stars file for distributed computation */
+	/** Distribute to the Actresses based on the deduplicated stars file for distributed computation */
 	void distributeWork() {
 
-		//create actors and assign data
-		Actor[] actors = new Actor[nstar];
+		//create Actresses and assign data
+		Actress[] Actresses = new Actress[nstar];
 		for (int i = 0; i < nstar; i++) {                                   
-			actors[i] = new Actor();
+			Actresses[i] = new Actress();
 		}
 
 		// read available theaters
@@ -131,13 +131,13 @@ behavior Main
 			standardOutput<-println("[error] Can't open the file " + theatersFile + " for reading.");
 		}
 
-		// migrate actors to theaters
+		// migrate Actresses to theaters
 		for (int i = 0; i < nstar; i++) {
 			standardOutput<-println("Sending actor "+
 					"uan://"+nameServer+":3030/a"+i+" to "+
 					"rmsp://"+theaters.get(i%theaters.size())+"/a"+i);
 
-			actors[i] = new Actor() at  
+			Actresses[i] = new Actress() at  
 				(new UAN("uan://"+nameServer+":3030/a"+i), 
 				 new UAL("rmsp://"+theaters.get(i%theaters.size())+"/a"+i)
 				);
@@ -148,18 +148,18 @@ behavior Main
 		initialTime = System.currentTimeMillis();
 		join {
 			for (int i = 0; i < nstar; i++) {
-				actors[i]<-calc(i, dedupFile, nstar);
+				Actresses[i]<-calc(i, dedupFile, nstar);
 			}
 		}@summarize(token);
 	}
 
-	/** Distribute to the actors based on the deduplicated stars file for concurrent computation*/
+	/** Distribute to the Actresses based on the deduplicated stars file for concurrent computation*/
 	void distributeWorkC() {
 
-		//create actors and assign data
-		Actor[] actors = new Actor[nstar];
+		//create Actresses and assign data
+		Actress[] Actresses = new Actress[nstar];
 		for (int i = 0; i < nstar; i++) {                                   
-			actors[i] = new Actor();
+			Actresses[i] = new Actress();
 		}
 
 		//start computation
@@ -167,7 +167,7 @@ behavior Main
 		initialTime = System.currentTimeMillis();
 		join {
 			for (int i = 0; i < nstar; i++) {
-				actors[i]<-calc(i, dedupFile, nstar);
+				Actresses[i]<-calc(i, dedupFile, nstar);
 			}
 		}@summarize(token);
 	}
