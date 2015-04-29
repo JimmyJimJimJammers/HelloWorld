@@ -49,9 +49,10 @@ behavior Main
 		}
 		else 
 		{
-			starsFile = argv[0];
-			nameServer = argv[1];
-			theatersFile = argv[2];
+			if (argv.length == 3)
+				starsFile = argv[0];
+				nameServer = argv[1];
+				theatersFile = argv[2];
 			dedup()@distributeWork();
 		}
 	}
