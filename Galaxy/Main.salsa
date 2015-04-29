@@ -37,7 +37,7 @@ behavior Main {
 	String dedupFile = "dedup.txt";
 	int nstar; // number of different stars
 
-	int X = 0, Y = 1, Z = 2, MIN = 3, MAX = 4, XMIN = 5, YMIN = 6, ZMIN = 7, XMAX = 8, YMAX = 9, ZMAX = 10, AVG = 11, RESULTSIZE = 12; // used to encode the result of one worker with an array of doubles
+	int X = 0, Y = 1, Z = 2, MIN = 3, MAX = 4, XMIN = 5, YMIN = 6, ZMIN = 7, XMAX = 8, YMAX = 9, ZMAX = 10, AVG = 11, RESULTSIZE = 12; // used to encode the result of one actor with an array of doubles
 
 	void act(String args[]) {
 		if (args.length >= 1) {
@@ -98,9 +98,9 @@ behavior Main {
 	void distributeWork() {
 
 		//create actors and assign data
-		Worker[] workers = new Worker[nstar];
+		Actor[] actors = new Actor[nstar];
 		for (int i = 0; i < nstar; i++) {                                   
-			workers[i] = new Worker();
+			actors[i] = new Actor();
 		}
 
 		// read available theaters
@@ -122,7 +122,7 @@ behavior Main {
 					"uan://"+nameServer+":3030/a"+i+" to "+
 					"rmsp://"+theaters.get(i%theaters.size())+"/a"+i);
 
-			workers[i] = new Worker() at  
+			actors[i] = new Actor() at  
 				(new UAN("uan://"+nameServer+":3030/a"+i), 
 				 new UAL("rmsp://"+theaters.get(i%theaters.size())+"/a"+i)
 				);
@@ -133,7 +133,7 @@ behavior Main {
 		initialTime = System.currentTimeMillis();
 		join {
 			for (int i = 0; i < nstar; i++) {
-				workers[i]<-calc(i, dedupFile, nstar);
+				actors[i]<-calc(i, dedupFile, nstar);
 			}
 		}@summarize(token);
 	}
@@ -142,9 +142,9 @@ behavior Main {
 	void distributeWorkC() {
 
 		//create actors and assign data
-		Worker[] workers = new Worker[nstar];
+		Actor[] actors = new Actor[nstar];
 		for (int i = 0; i < nstar; i++) {                                   
-			workers[i] = new Worker();
+			actors[i] = new Actor();
 		}
 
 		//start computation
@@ -152,7 +152,7 @@ behavior Main {
 		initialTime = System.currentTimeMillis();
 		join {
 			for (int i = 0; i < nstar; i++) {
-				workers[i]<-calc(i, dedupFile, nstar);
+				actors[i]<-calc(i, dedupFile, nstar);
 			}
 		}@summarize(token);
 	}

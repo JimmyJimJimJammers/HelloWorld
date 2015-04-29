@@ -1,0 +1,9 @@
+//SOLUTION
+java -cp salsa1.1.5.jar:. salsac.SalsaCompiler sky/*.salsa
+javac -cp salsa1.1.5.jar:. sky/*.java
+java -cp salsa1.1.5.jar:. sky.Analyzer sky/Smallestest.txt -c
+
+//MY CODE
+java -cp salsa1.1.5.jar:. salsac.SalsaCompiler Galaxy/*.salsa
+javac -cp salsa1.1.5.jar:. Galaxy/*.java
+java -cp salsa1.1.5.jar:. Galaxy.Main Galaxy/Smallestest.txt -c
