@@ -40,7 +40,7 @@ behavior Main
 
 	int X = 0, Y = 1, Z = 2, MIN = 3, MAX = 4, XMIN = 5, YMIN = 6, ZMIN = 7, XMAX = 8, YMAX = 9, ZMAX = 10, AVG = 11, RESULTSIZE = 12; // used to encode the result of one actor with an array of doubles
 
-	void act(String [] argv) 
+	/*void act(String [] argv)
 	{
 		if (argv[argv.length -1] == "--concurrent" || argv[1] == "-c")
 		{
@@ -55,36 +55,46 @@ behavior Main
 				theatersFile = argv[2];
 			dedup()@distributeWork();
 		}
-	}
-	// 	if (args.length >= 1) {
-	// 		String lastarg = args[args.length-1];
-	// 		if (lastarg.equalsIgnoreCase("--concurrent") || lastarg.equalsIgnoreCase("-c")) {
-	// 			String[] nargs = new String[args.length-1];
-	// 			for (int i = 0; i < nargs.length; i++) nargs[i] = args[i];
-	// 			cact(nargs);
-	// 		} else {
-	// 			dact(args);
-	// 		}
-	// 	} else {
-	// 		dact(args);
-	// 	}
-	// }      
+	}*/
 
-	// /** concurrent */
-	// void cact(String args[]) {
-	// 	int argc = args.length;
-	// 	if (argc >= 1) starsFile = args[0];
-	// 	dedup()@distributeWorkC();
-	// }
+    /*void act(String args[])
+    {
+        if (args.length >= 1)
+        {
+            String lastarg = args[args.length-1];
+            if (lastarg.equalsIgnoreCase("--concurrent") || lastarg.equalsIgnoreCase("-c"))
+            {
+                String[] nargs = new String[args.length-1];
+                for (int i = 0; i < nargs.length; i++) nargs[i] = args[i];
+                cact(nargs);
+            }
+            else
+            {
+                dact(args);
+            }
+        }
+        else
+        {
+            dact(args);
+        }
+    }
 
-	// /** distributed */
-	// void dact(String args[]) {
-	// 	int argc = args.length;
-	// 	if(argc >= 1) starsFile = args[0];
-	// 	if(argc >= 2) nameServer = args[1];
-	// 	if(argc >= 3) theatersFile = args[2];
-	// 	dedup()@distributeWork();
-	// }
+    // concurrent
+    void cact(String args[]) {
+    int argc = args.length;
+    if (argc >= 1) starsFile = args[0];
+    dedup()@distributeWorkC();
+    }
+
+    // distributed
+    void dact(String args[]) {
+    int argc = args.length;
+    if(argc >= 1) starsFile = args[0];
+    if(argc >= 2) nameServer = args[1];
+    if(argc >= 3) theatersFile = args[2];*/
+
+    dedup()@distributeWork();
+}
 
 	/** Deduplicate the stars file, return the name of the deduplicated file */
 	void dedup() {
