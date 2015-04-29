@@ -13,3 +13,23 @@ git add Galaxy/Actress.salsa Galaxy/Main.salsa Commands.txt Galaxy/Smallest.txt 
 git commit -m “UF”
 git pull
 git push
+
+
+
+//start server (terminal 1)
+java -cp salsa1.1.5.jar:. wwc.naming.WWCNamingServer
+
+//starting actors (terminal 2-n)
+java -cp salsa1.1.5.jar:. wwc.messaging.Theater 9000
+java -cp salsa1.1.5.jar:. wwc.messaging.Theater 9001
+java -cp salsa1.1.5.jar:. wwc.messaging.Theater 9002
+java -cp salsa1.1.5.jar:. wwc.messaging.Theater 9003
+
+//make text file with: (2-n of these)
+127.0.0.1:9000
+127.0.0.1.9001
+127.0.0.1.9002
+127.0.0.1.9003
+
+//run on terminal (n+1) with (This must be the last step)
+java -cp salsa1.1.5.jar:. Galaxy.Main Galaxy/Smallestest.txt 127.0.0.1 Galaxy/Ports.txt
