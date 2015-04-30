@@ -249,10 +249,10 @@ behavior Main
             //if the closest neighbors for this pair is closer, update the value
 			if ((Double)((ArrayList)actressOutput[i]).get(minIndex) <= closestNeighborDist)
             {
-                standardOutput<-print("Closest Dist: " + (Double)((ArrayList)actressOutput[i]).get(minIndex) + " <= " + closestNeighborDist + "\n");
+                //standardOutput<-print("Closest Dist: " + (Double)((ArrayList)actressOutput[i]).get(minIndex) + " <= " + closestNeighborDist + "\n");
                 if((Double)((ArrayList)actressOutput[i]).get(minIndex) < closestNeighborDist)
                 {
-                    standardOutput<-print("Clearing\n");
+                    //standardOutput<-print("Clearing\n");
                     for (int j = 0; j < 6; j++)
                     {
                         closestNeighbor[j].clear();
@@ -270,31 +270,30 @@ behavior Main
 
 			if ((Double)((ArrayList)actressOutput[i]).get(maxIndex) >= farthestNeighborDist)
             {
-                standardOutput<-print("\tFarthest Dist: " + (Double)((ArrayList)actressOutput[i]).get(maxIndex) + " >= " + farthestNeighborDist + "\n");
+                //standardOutput<-print("\tFarthest Dist: " + (Double)((ArrayList)actressOutput[i]).get(maxIndex) + " >= " + farthestNeighborDist + "\n");
                 if((Double)((ArrayList)actressOutput[i]).get(maxIndex) > farthestNeighborDist)
                 {
-                    standardOutput<-print("\tClearing\n");
+                    //standardOutput<-print("\tClearing\n");
                     for (int j = 0; j < 6; j++)
                     {
                         farthestNeighbor[j].clear();
                     }
                 }
-
-				farthestNeighborDist = (Double)((ArrayList)actressOutput[i]).get(maxIndex);
-				farthestNeighbor[0].add((Double)((ArrayList)actressOutput[i]).get(xIndex));
-				farthestNeighbor[1].add((Double)((ArrayList)actressOutput[i]).get(yIndex));
-				farthestNeighbor[2].add((Double)((ArrayList)actressOutput[i]).get(zIndex));
-				farthestNeighbor[3].add((Double)((ArrayList)actressOutput[i]).get(xMaxIndex));
-				farthestNeighbor[4].add((Double)((ArrayList)actressOutput[i]).get(yMaxIndex));
-				farthestNeighbor[5].add((Double)((ArrayList)actressOutput[i]).get(zMaxIndex));
+                farthestNeighborDist = (Double)((ArrayList)actressOutput[i]).get(maxIndex);
+                farthestNeighbor[0].add((Double)((ArrayList)actressOutput[i]).get(xIndex));
+                farthestNeighbor[1].add((Double)((ArrayList)actressOutput[i]).get(yIndex));
+                farthestNeighbor[2].add((Double)((ArrayList)actressOutput[i]).get(zIndex));
+                farthestNeighbor[3].add((Double)((ArrayList)actressOutput[i]).get(xMaxIndex));
+                farthestNeighbor[4].add((Double)((ArrayList)actressOutput[i]).get(yMaxIndex));
+                farthestNeighbor[5].add((Double)((ArrayList)actressOutput[i]).get(zMaxIndex));
 			}
 
 			if ((Double)((ArrayList)actressOutput[i]).get(maxIndex) <= minFarthestStar)
             {
-                standardOutput<-print("\t\tClosest Farthest: " + (Double)((ArrayList)actressOutput[i]).get(maxIndex) + " <= " + minFarthestStar + "\n");
+                //standardOutput<-print("\t\tClosest Farthest: " + (Double)((ArrayList)actressOutput[i]).get(maxIndex) + " <= " + minFarthestStar + "\n");
                 if ((Double)((ArrayList)actressOutput[i]).get(maxIndex) < minFarthestStar)
                 {
-                    standardOutput<-print("\t\tClearing\n");
+                    //standardOutput<-print("\t\tClearing\n");
                     for(int j = 0; j < 6; j++)
                     {
                         idealHubStar[j].clear();
@@ -312,10 +311,10 @@ behavior Main
 
 			if ((Double)((ArrayList)actressOutput[i]).get(minIndex) >= maxClosestStar)
             {
-                standardOutput<-print("\t\t\tFarthest Closest: " + (Double)((ArrayList)actressOutput[i]).get(minIndex) + " >= " + maxClosestStar + "\n");
+                //standardOutput<-print("\t\t\tFarthest Closest: " + (Double)((ArrayList)actressOutput[i]).get(minIndex) + " >= " + maxClosestStar + "\n");
                 if ((Double)((ArrayList)actressOutput[i]).get(minIndex) > maxClosestStar)
                 {
-                    standardOutput<-print("\t\t\tClearing\n");
+                    //standardOutput<-print("\t\t\tClearing\n");
                     for (int j = 0; j < 6; j++)
                     {
                         idealJailStar[j].clear();
@@ -333,10 +332,10 @@ behavior Main
 
 			if ((Double)((ArrayList)actressOutput[i]).get(avgIndex) <= minAverageDist)
             {
-                standardOutput<-print("\t\t\t\tMinimum Average: " + (Double)((ArrayList)actressOutput[i]).get(avgIndex) + " <= " + minAverageDist + "\n");
+                //standardOutput<-print("\t\t\t\tMinimum Average: " + (Double)((ArrayList)actressOutput[i]).get(avgIndex) + " <= " + minAverageDist + "\n");
                 if ((Double)((ArrayList)actressOutput[i]).get(avgIndex) < minAverageDist)
                 {
-                    standardOutput<-print("\t\t\t\tClearing\n");
+                    //standardOutput<-print("\t\t\t\tClearing\n");
                     for (int j = 0; j < 3; j++)
                     {
                         idealCapitalStar[j].clear();
@@ -354,44 +353,19 @@ behavior Main
 
         long result = System.currentTimeMillis() - startTime;
 
-/*
- d1  // minimal pairwise distance
- s1 s2
- ...
- 
- d2  // maximal pairwise distance
- s1 s2
- s3 s2
- ...
- 
- d3 // minimum maximal distance
- s3 s1
- ...
- 
- d4 // maximum minimal distance
- s4
- s5
- ...
- 
- d5 // minimal average distance
- s1
- ...
- where d_i denotes a distance and s_i denotes a star, which is represented as (x,y,z), corresponding to the x, y, and z coordinates of the star.
- */
         standardOutput<-print("\nClosest Neighbor Distance: " + closestNeighborDist + "\n") @
         printAllElements(closestNeighbor, 6) @
         standardOutput<-println("Farthest Neighbor Distance: " + farthestNeighborDist) @
         printAllElements(farthestNeighbor, 6) @
-        standardOutput<-println("Minimum Farthest Star Distance: " + minFarthestStar) @
+        standardOutput<-println("Minimum Farthest Star Distance (Ideal Hub): " + minFarthestStar) @
         printAllElements(idealHubStar, 3) @
-        standardOutput<-println("Maximum Closest Star Distance: " + maxClosestStar) @
+        standardOutput<-println("Maximum Closest Star Distance (Ideal Jail): " + maxClosestStar) @
         printAllElements(idealJailStar, 3) @
-        standardOutput<-println("Minimum Average Distance: " + minAverageDist) @
+        standardOutput<-println("Minimum Average Distance (Ideal Capital): " + minAverageDist) @
         printAllElements(idealCapitalStar, 3) @
         standardOutput<-print("Completion Time: " + result + " ms.\n");
 
 	}
-
     void printAllElements(ArrayList[] outputStuff, int arraySize)
     {
         for(int i = 0; i < outputStuff[0].size(); i++)
