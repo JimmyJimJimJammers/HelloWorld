@@ -114,11 +114,11 @@ behavior Main
 		Actress[] Actresses = new Actress[numStars];
 		ArrayList theaters = new ArrayList();
 		String theater;
-		int i = 0;
-		while( i < numStars)
+		int u = 0;
+		while( u < numStars)
 		{                                   	// first create actresses
-			Actresses[i] = new Actress();
-			i++;
+			Actresses[u] = new Actress();
+			u++;
 		}
 
 
@@ -344,15 +344,15 @@ behavior Main
 			}
 		}
 
-		ArrayList[] closestNeighborDup = closestNeighbor;
-		ArrayList[] farthestNeighborDup = farthestNeighbor;
+		token closestNeighborDup = removeDuplicates(closestNeighbor);
+		token farthestNeighborDup = removeDuplicates(farthestNeighbor);
 
         long result = System.currentTimeMillis() - startTime;
 
         standardOutput<-print("\nClosest Neighbor Distance: " + closestNeighborDist + "\n") @
-        printAllElements(closestNeighbor, 6) @
+        printAllElements(closestNeighborDup, 6) @
         standardOutput<-println("Farthest Neighbor Distance: " + farthestNeighborDist) @
-        printAllElements(farthestNeighbor, 6) @
+        printAllElements(farthestNeighborDup, 6) @
         standardOutput<-println("Minimum Farthest Star Distance (Ideal Hub): " + minFarthestStar) @
         printAllElements(idealHubStar, 3) @
         standardOutput<-println("Maximum Closest Star Distance (Ideal Jail): " + maxClosestStar) @
@@ -385,5 +385,33 @@ behavior Main
             }
             standardOutput<-print("\n");
         }
+    }
+
+
+
+ArrayList[] removeDuplicates(ArrayList[] data) 
+    {	
+    	Double epsilon = .0000001;
+    	for (int x = 0; x < data[0].size(); x++ )
+    	{
+    		//boolean removed = false;
+    		for (int y = x+1; y < data[0].size(); y++)
+    		{
+    			if (((Double)data[0].get(x)).equals((Double)data[3].get(y)) &&
+    				((Double)data[1].get(x)).equals((Double)data[4].get(y)) &&
+    				((Double)data[2].get(x)).equals((Double)data[5].get(y)) &&
+    				((Double)data[3].get(x)).equals((Double)data[0].get(y)) &&
+    				((Double)data[4].get(x)).equals((Double)data[1].get(y)) &&
+    				((Double)data[5].get(x)).equals((Double)data[2].get(y)))
+    			{
+    				for (int l = 0; l < 6; l++)
+    				{ 
+    					data[l].remove(x);
+    				}
+    				x--;
+    			}
+    		}
+    	}
+    	return data;
     }
 }
