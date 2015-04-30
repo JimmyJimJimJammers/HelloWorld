@@ -164,7 +164,7 @@ behavior Main
 				Actresses[t]<-calc(t, newFile, numStar);
 				t++;
 			}
-		}@summarize(token);
+		}@compareData(token);
 	}
 
 	//Concurrent version
@@ -191,7 +191,7 @@ behavior Main
 				Actresses[x]<-calc(x, newFile, numStar);
 				x++;
 			}
-		}@summarize(token);
+		}@compareData(token);
 	}
 
 	void endTimer(){
@@ -201,153 +201,173 @@ behavior Main
 	}
 
     //takes the results from the Actresses and combines them
-	void summarize(Object[] results)
+	void compareData(Object[] results)
     {
-        // closest neighbour distance
-		double cndis = Double.MAX_VALUE;
+        //closest neighbours
+		double closestNeighborDist = Double.MAX_VALUE;
+        //farthest neighbours
+        double farthestNeighborDist = 0.0;
+        //minimum max distance **
+        double minmaxdis = Double.MAX_VALUE;
+        //maximum min distance **
+        double maxmindis = 0.0;
+        // minimum average distance
+        double minavgdis = Double.MAX_VALUE;
+
         //for holding the each star and it's closest neighbor
-		ArrayList[] cn = new ArrayList[6];
-        //go through and make an ArrayList for each coordinate?
-		for (int i = 0; i < 6; i++) cn[i] = new ArrayList();
-
-        //farthest neighbour distance
-		double fndis = 0.0;
+		ArrayList[] closestNeighbor = new ArrayList[6];             //pair
         // farthest neighbour pairs
-		ArrayList[] fn = new ArrayList[6];
-        //go through each star and
-		for (int i = 0; i < 6; i++) fn[i] = new ArrayList();
+        ArrayList[] farthestNeighbor = new ArrayList[6];            //pair
+        //ideal hub stars
+        ArrayList[] idealHubStar = new ArrayList[6];                //single
+        // ideal jail stars
+        ArrayList[] idealJailStar = new ArrayList[6];               //single
+        // ideal capital stars
+        ArrayList[] idealCapitalStar = new ArrayList[3];            //single
 
-		double minmaxdis = Double.MAX_VALUE; // minimum max distance
-		ArrayList[] ihs = new ArrayList[6]; // ideal hub stars
-		for (int i = 0; i < 6; i++) ihs[i] = new ArrayList();
-		double maxmindis = 0.0; // maximum min distance
-		ArrayList[] ijs = new ArrayList[6]; // ideal jail stars
-		for (int i = 0; i < 6; i++) ijs[i] = new ArrayList();
-		double minavgdis = Double.MAX_VALUE; // minimum average distance
-		ArrayList[] ics = new ArrayList[3]; // ideal capital stars
-		for (int i = 0; i < 3; i++) ics[i] = new ArrayList();
+        //go through and make an ArrayList for each coordinate?
+		for (int i = 0; i < 6; i++)
+        {
+            closestNeighbor[i] = new ArrayList();
+            farthestNeighbor[i] = new ArrayList();
+            idealHubStar[i] = new ArrayList();
+            idealJailStar[i] = new ArrayList();
+
+            if(i < 3)
+            {
+                idealCapitalStar[i] = new ArrayList();
+            }
+
+        }
 
 		//standardOutput<-println("summing...");
 		for (int i = 0; i < numStar; i++)
         {
-			double rmin = (Double)((ArrayList)results[i]).get(minIndex);
-			double rmax = (Double)((ArrayList)results[i]).get(maxIndex);
-			double ravg = (Double)((ArrayList)results[i]).get(avgIndex);
-			double rx = (Double)((ArrayList)results[i]).get(xIndex);
-			double ry = (Double)((ArrayList)results[i]).get(yIndex);
-			double rz = (Double)((ArrayList)results[i]).get(zIndex);
-			double rxmin = (Double)((ArrayList)results[i]).get(xMinIndex);
-			double rymin = (Double)((ArrayList)results[i]).get(yMinIndex);
-			double rzmin = (Double)((ArrayList)results[i]).get(zMinIndex);
-			double rxmax = (Double)((ArrayList)results[i]).get(xMaxIndex);
-			double rymax = (Double)((ArrayList)results[i]).get(yMaxIndex);
-			double rzmax = (Double)((ArrayList)results[i]).get(zMaxIndex);
-			//standardOutput<-println(rmin+" "+rmax+" "+ravg+" "+rx+" "+ry+" "+rz);
+            //if the closest neighbors for this pair is closer, update the value
+			if ((Double)((ArrayList)results[i]).get(minIndex) <= closestNeighborDist)
+            {
+                standardOutput<-print("Closest Dist: " + (Double)((ArrayList)results[i]).get(minIndex) + " <= " + closestNeighborDist + "\n");
+                if((Double)((ArrayList)results[i]).get(minIndex) < closestNeighborDist)
+                {
+                    standardOutput<-print("Clearing\n");
+                    for (int j = 0; j < 6; j++)
+                    {
+                        closestNeighbor[j].clear();
+                    }
+                }
 
-			if (rmin < cndis) {
-				cndis = rmin;
-				for (int j = 0; j < 6; j++) cn[j].clear();
-				cn[0].add(rx);
-				cn[1].add(ry);
-				cn[2].add(rz);
-				cn[3].add(rxmin);
-				cn[4].add(rymin);
-				cn[5].add(rzmin);
-			} else if (rmin == cndis) {
-				cn[0].add(rx);
-				cn[1].add(ry);
-				cn[2].add(rz);
-				cn[3].add(rxmin);
-				cn[4].add(rymin);
-				cn[5].add(rzmin);
+				closestNeighborDist = (Double)((ArrayList)results[i]).get(minIndex);
+				closestNeighbor[0].add((Double)((ArrayList)results[i]).get(xIndex));
+				closestNeighbor[1].add((Double)((ArrayList)results[i]).get(yIndex));
+				closestNeighbor[2].add((Double)((ArrayList)results[i]).get(zIndex));
+				closestNeighbor[3].add((Double)((ArrayList)results[i]).get(xMinIndex));
+				closestNeighbor[4].add((Double)((ArrayList)results[i]).get(yMinIndex));
+				closestNeighbor[5].add((Double)((ArrayList)results[i]).get(zMinIndex));
 			}
 
-			if (rmax > fndis) {
-				fndis = rmax;
-				for (int j = 0; j < 6; j++) fn[j].clear();
-				fn[0].add(rx);
-				fn[1].add(ry);
-				fn[2].add(rz);
-				fn[3].add(rxmax);
-				fn[4].add(rymax);
-				fn[5].add(rzmax);
-			} else if (rmax == fndis) {
-				fn[0].add(rx);
-				fn[1].add(ry);
-				fn[2].add(rz);
-				fn[3].add(rxmax);
-				fn[4].add(rymax);
-				fn[5].add(rzmax);
+			if ((Double)((ArrayList)results[i]).get(maxIndex) >= farthestNeighborDist)
+            {
+                standardOutput<-print("\tFarthest Dist: " + (Double)((ArrayList)results[i]).get(maxIndex) + " >= " + farthestNeighborDist + "\n");
+                if((Double)((ArrayList)results[i]).get(maxIndex) > farthestNeighborDist)
+                {
+                    standardOutput<-print("\tClearing\n");
+                    for (int j = 0; j < 6; j++)
+                    {
+                        farthestNeighbor[j].clear();
+                    }
+                }
+
+				farthestNeighborDist = (Double)((ArrayList)results[i]).get(maxIndex);
+				farthestNeighbor[0].add((Double)((ArrayList)results[i]).get(xIndex));
+				farthestNeighbor[1].add((Double)((ArrayList)results[i]).get(yIndex));
+				farthestNeighbor[2].add((Double)((ArrayList)results[i]).get(zIndex));
+				farthestNeighbor[3].add((Double)((ArrayList)results[i]).get(xMaxIndex));
+				farthestNeighbor[4].add((Double)((ArrayList)results[i]).get(yMaxIndex));
+				farthestNeighbor[5].add((Double)((ArrayList)results[i]).get(zMaxIndex));
 			}
 
-			if (rmax < minmaxdis) {
-				minmaxdis = rmax;
-				for (int j = 0; j < 6; j++) ihs[j].clear();
-				ihs[0].add(rx);
-				ihs[1].add(ry);
-				ihs[2].add(rz);
-				ihs[3].add(rxmax);
-				ihs[4].add(rymax);
-				ihs[5].add(rzmax);
-			} else if (rmax == minmaxdis) {
-				ihs[0].add(rx);
-				ihs[1].add(ry);
-				ihs[2].add(rz);
-				ihs[3].add(rxmax);
-				ihs[4].add(rymax);
-				ihs[5].add(rzmax);
+			if ((Double)((ArrayList)results[i]).get(maxIndex) <= minmaxdis)
+            {
+                standardOutput<-print("\t\tClosest Farthest: " + (Double)((ArrayList)results[i]).get(maxIndex) + " <= " + minmaxdis + "\n");
+                if ((Double)((ArrayList)results[i]).get(maxIndex) < minmaxdis)
+                {
+                    standardOutput<-print("\t\tClearing\n");
+                    for(int j = 0; j < 6; j++)
+                    {
+                        idealHubStar[j].clear();
+                    }
+                }
+
+				minmaxdis = (Double)((ArrayList)results[i]).get(maxIndex);
+				idealHubStar[0].add((Double)((ArrayList)results[i]).get(xIndex));
+				idealHubStar[1].add((Double)((ArrayList)results[i]).get(yIndex));
+				idealHubStar[2].add((Double)((ArrayList)results[i]).get(zIndex));
+				idealHubStar[3].add((Double)((ArrayList)results[i]).get(xMaxIndex));//hold on
+				idealHubStar[4].add((Double)((ArrayList)results[i]).get(yMaxIndex));//hold on
+				idealHubStar[5].add((Double)((ArrayList)results[i]).get(zMaxIndex));//hold on
 			}
 
-			if (rmin > maxmindis) {
-				maxmindis = rmin;
-				for (int j = 0; j < 6; j++) ijs[j].clear();
-				ijs[0].add(rx);
-				ijs[1].add(ry);
-				ijs[2].add(rz);
-				ijs[3].add(rxmin);
-				ijs[4].add(rymin);
-				ijs[5].add(rzmin);
-			} else if (rmin == maxmindis) {
-				ijs[0].add(rx);
-				ijs[1].add(ry);
-				ijs[2].add(rz);
-				ijs[3].add(rxmin);
-				ijs[4].add(rymin);
-				ijs[5].add(rzmin);
+			if ((Double)((ArrayList)results[i]).get(minIndex) >= maxmindis)
+            {
+                standardOutput<-print("\t\t\tFarthest Closest: " + (Double)((ArrayList)results[i]).get(minIndex) + " >= " + maxmindis + "\n");
+                if ((Double)((ArrayList)results[i]).get(minIndex) > maxmindis)
+                {
+                    standardOutput<-print("\t\t\tClearing\n");
+                    for (int j = 0; j < 6; j++)
+                    {
+                        idealJailStar[j].clear();
+                    }
+                }
+
+				maxmindis = (Double)((ArrayList)results[i]).get(minIndex);
+				idealJailStar[0].add((Double)((ArrayList)results[i]).get(xIndex));
+				idealJailStar[1].add((Double)((ArrayList)results[i]).get(yIndex));
+				idealJailStar[2].add((Double)((ArrayList)results[i]).get(zIndex));
+				idealJailStar[3].add((Double)((ArrayList)results[i]).get(xMinIndex));//hold on
+				idealJailStar[4].add((Double)((ArrayList)results[i]).get(yMinIndex));//hold on
+				idealJailStar[5].add((Double)((ArrayList)results[i]).get(zMinIndex));//hold on
 			}
 
-			if (ravg < minavgdis) {
-				minavgdis = ravg;
-				for (int j = 0; j < 3; j++) ics[j].clear();
-				ics[0].add(rx);
-				ics[1].add(ry);
-				ics[2].add(rz);
-			} else if (ravg == minavgdis) {
-				ics[0].add(rx);
-				ics[1].add(ry);
-				ics[2].add(rz);
+			if ((Double)((ArrayList)results[i]).get(avgIndex) <= minavgdis)
+            {
+                standardOutput<-print("\t\t\t\tMinimum Average: " + (Double)((ArrayList)results[i]).get(avgIndex) + " <= " + minavgdis + "\n");
+                if ((Double)((ArrayList)results[i]).get(avgIndex) < minavgdis)
+                {
+                    standardOutput<-print("\t\t\t\tClearing\n");
+                    for (int j = 0; j < 3; j++)
+                    {
+                        idealCapitalStar[j].clear();
+                    }
+                }
+				minavgdis = (Double)((ArrayList)results[i]).get(avgIndex);
+				idealCapitalStar[0].add((Double)((ArrayList)results[i]).get(xIndex));
+				idealCapitalStar[1].add((Double)((ArrayList)results[i]).get(yIndex));
+				idealCapitalStar[2].add((Double)((ArrayList)results[i]).get(zIndex));
 			}
 		}
 
-		token cndedup = dedupPair(cn);
-		token fndedup = dedupPair(fn);
+		token cndedup = dedupPair(closestNeighbor);
+		token fndedup = dedupPair(farthestNeighbor);
 
-		standardOutput<-println("Stars file: "+starsFile+"\nnumber of stars: "+numStar+"\n\nminimal pairwise distance: "+cndis)@
+        long result = System.currentTimeMillis() - startTime;
+
+		standardOutput<-println("Stars file: "+starsFile+"\nnumber of stars: "+numStar+"\n\nminimal pairwise distance: "+closestNeighborDist)@
 		outputArrayList(cndedup)@
 		standardOutput<-println(token)@
-		standardOutput<-println("maximal pairwise distance: "+fndis)@
+		standardOutput<-println("maximal pairwise distance: "+farthestNeighborDist)@
 		outputArrayList(fndedup)@
 		standardOutput<-println(token)@
 		standardOutput<-println("minimum maximal distance: "+minmaxdis)@
-		outputArrayList(ihs)@
+		outputArrayList(idealHubStar)@
 		standardOutput<-println(token)@
 		standardOutput<-println("maximum minimal distance: "+maxmindis)@
-		outputArrayList(ijs)@
+		outputArrayList(idealJailStar)@
 		standardOutput<-println(token)@
 		standardOutput<-println("minimal average distance: "+minavgdis)@
-		outputArrayList(ics)@
+		outputArrayList(idealCapitalStar)@
 		standardOutput<-println(token)@
-		endTimer();
+        standardOutput<-print("Total time: " + result + " ms.\n");
+
 	}
 
 	ArrayList[] dedupPair(ArrayList[] pairs) {
