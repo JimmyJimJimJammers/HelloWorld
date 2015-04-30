@@ -41,19 +41,19 @@ behavior Main
 
 	// Change these into map form
 	// use strings for keys 
-	int X = 0;
-    int Y = 1;
-    int Z = 2;
-    int MIN = 3;
-    int MAX = 4;
-    int XMIN = 5;
-    int YMIN = 6;
-    int ZMIN = 7;
-    int XMAX = 8;
-    int YMAX = 9;
-    int ZMAX = 10;
-    int AVG = 11;
-    int RESULTSIZE = 12; // used to encode the result of one actor with an array of doubles
+	int xIndex = 0;
+    int yIndex = 1;
+    int zIndex = 2;
+    int minIndex = 3;
+    int maxIndex = 4;
+    int xMinIndex = 5;
+    int yMinIndex = 6;
+    int zMinIndex = 7;
+    int xMaxIndex = 8;
+    int yMaxIndex = 9;
+    int zMaxIndex = 10;
+    int avgIndex = 11;
+    int numStarIndex = 12; // used to encode the result of one actor with an array of doubles
 
 	void act(String [] argv)
 	{
@@ -220,18 +220,18 @@ behavior Main
 
 		//standardOutput<-println("summing...");
 		for (int i = 0; i < numStar; i++){
-			double rmin = (Double)((ArrayList)results[i]).get(MIN);
-			double rmax = (Double)((ArrayList)results[i]).get(MAX);
-			double ravg = (Double)((ArrayList)results[i]).get(AVG);
-			double rx = (Double)((ArrayList)results[i]).get(X);
-			double ry = (Double)((ArrayList)results[i]).get(Y);
-			double rz = (Double)((ArrayList)results[i]).get(Z);
-			double rxmin = (Double)((ArrayList)results[i]).get(XMIN);
-			double rymin = (Double)((ArrayList)results[i]).get(YMIN);
-			double rzmin = (Double)((ArrayList)results[i]).get(ZMIN);
-			double rxmax = (Double)((ArrayList)results[i]).get(XMAX);
-			double rymax = (Double)((ArrayList)results[i]).get(YMAX);
-			double rzmax = (Double)((ArrayList)results[i]).get(ZMAX);
+			double rmin = (Double)((ArrayList)results[i]).get(minIndex);
+			double rmax = (Double)((ArrayList)results[i]).get(maxIndex);
+			double ravg = (Double)((ArrayList)results[i]).get(avgIndex);
+			double rx = (Double)((ArrayList)results[i]).get(xIndex);
+			double ry = (Double)((ArrayList)results[i]).get(yIndex);
+			double rz = (Double)((ArrayList)results[i]).get(zIndex);
+			double rxmin = (Double)((ArrayList)results[i]).get(xMinIndex);
+			double rymin = (Double)((ArrayList)results[i]).get(yMinIndex);
+			double rzmin = (Double)((ArrayList)results[i]).get(zMinIndex);
+			double rxmax = (Double)((ArrayList)results[i]).get(xMaxIndex);
+			double rymax = (Double)((ArrayList)results[i]).get(yMaxIndex);
+			double rzmax = (Double)((ArrayList)results[i]).get(zMaxIndex);
 			//standardOutput<-println(rmin+" "+rmax+" "+ravg+" "+rx+" "+ry+" "+rz);
 
 			if (rmin < cndis) {
