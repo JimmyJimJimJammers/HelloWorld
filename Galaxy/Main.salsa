@@ -35,8 +35,8 @@ behavior Main
 	long startTime = 0;                 // Starting Time
 	String serverName = "localhost";  // Name Server
 	String theatersFile = "theatersFile.txt";    // File containing the theaters          
-	String newFile = "newFile.txt";
 	int numStar;                        // number of different stars
+	double[][] starPoints;
 
 
 	// Change these into map form
@@ -76,43 +76,46 @@ behavior Main
 		}
 	}
 
-
 	/** Deduplicate the stars file, return the name of the deduplicated file */
-	void removeDuplicates()
-	{
-
-		TreeSet starSet = new TreeSet();
-		try 
+		void removeDuplicates()
 		{
 
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(starsFile));
-			String tempStar;
-            tempStar = bufferedReader.readLine();
+			TreeSet starSet = new TreeSet();
+			try 
+			{
 
-			while ((tempStar = bufferedReader.readLine()) != null) 
-				if (!tempStar.equalsIgnoreCase("")) 
-					starSet.add(tempStar);
-			bufferedReader.close();
-		} 
-		catch (IOException ioe) 
-		{
-			standardOutput<-print("File Error: " + starsFile + "\n");
+				BufferedReader bufferedReader = new BufferedReader(new FileReader(starsFile));
+				String tempStar;
+	            tempStar = bufferedReader.readLine();
+	            numStar = Integer.parseInt(tempStar);
+	            starPoints = new double[numStar][3];
+	            int i=0;
+				while ((tempStar = bufferedReader.readLine()) != null)
+				{
+					if (!tempStar.equalsIgnoreCase("")) 
+					{
+						starSet.add(tempStar);
+						//standardOutput<-println(">> " + tempStar);
+
+						String[] parts = tempStar.split(" ");
+	                	if(parts.length > 1)
+	                	{
+	                    starPoints[i][0] = Double.parseDouble(parts[0]);
+	                    starPoints[i][1] = Double.parseDouble(parts[1]);
+	                    starPoints[i][2] = Double.parseDouble(parts[2]);
+	               		}
+					}
+					i++;
+				}
+
+				bufferedReader.close();
+			} 
+			catch (IOException ioe) 
+			{
+				standardOutput<-print("File Error: " + starsFile + "\n");
+			}
+
 		}
-
-		try 
-		{
-			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(newFile)));
-			Iterator itr = starSet.iterator(); 
-			while(itr.hasNext()) 
-				writer.println((String)itr.next());
-			writer.close();
-		} 
-		catch (IOException ioe) 
-		{
-			standardOutput<-print("File Error: " + newFile + "\n");
-		}
-		numStar = starSet.size();
-	}
 
 	/** Distribute to the Actresses based on the deduplicated stars file for distributed computation */
 	void SendtoActresses() {
@@ -161,7 +164,7 @@ behavior Main
 			int t =0;
 			while(t < numStar)
 			 {
-				Actresses[t]<-calc(t, newFile, numStar);
+				Actresses[t]<-calc(t, starPoints, numStar);
 				t++;
 			}
 		}@compareData(token);
@@ -188,7 +191,7 @@ behavior Main
 			int x = 0;
 			while(x < numStar)
 			{
-				Actresses[x]<-calc(x, newFile, numStar);
+				Actresses[x]<-calc(x, starPoints, numStar);
 				x++;
 			}
 		}@compareData(token);
