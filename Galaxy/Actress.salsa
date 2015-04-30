@@ -1,3 +1,4 @@
+
 module Galaxy;
 import java.io.*;
 import java.util.*;
@@ -12,9 +13,9 @@ behavior Actress
     }
 
     //the location of this Actresss star
-	double startX = 0.0;
-	double startY = 0.0;
-	double startZ = 0.0;
+    double startX = 0.0;
+    double startY = 0.0;
+    double startZ = 0.0;
 
     //these are the index locations of the return values in the array returnValues
     int xIndex = 0;
@@ -31,42 +32,17 @@ behavior Actress
     int avgIndex = 11;
     int numStarIndex = 12; // used to encode the result of one worker with an array of doubles
 
-	//take the nth star (using the processed file of stars) and find all of the requested values
-	ArrayList calc(int n, String fileProcessed, int numStar)
+    //take the nth star (using the processed file of stars) and find all of the requested values
+    //ArrayList calc(int n, String fileProcessed, int numStar)
+    ArrayList calc(int n, double[][] starPoints, int numStar)
     {
-		double[][] starPoints = new double[numStar][3];
-
-		try
-        {
-            //get the file that has all the non-duplicate stars
-			BufferedReader inputFile = new BufferedReader(new FileReader(fileProcessed));
-
-            //go through every line and gather star locations
-			for (int i = 0; i < numStar; i++)
-            {
-				String stringPoints = inputFile.readLine();
-				String[] parts = stringPoints.split(" ");
-                if(parts.length > 1)
-                {
-                    starPoints[i][0] = Double.parseDouble(parts[0]);
-                    starPoints[i][1] = Double.parseDouble(parts[1]);
-                    starPoints[i][2] = Double.parseDouble(parts[2]);
-                }
-			}
-			inputFile.close();
-		}
-        catch (IOException ioe)
-        {
-			standardOutput<-println("[error] Can't open the file " + fileProcessed + " for reading.");
-		}
-
         //get the locations values of the star we are currently interested in
         startX= starPoints[n][0];
-		startY = starPoints[n][1];
-		startZ = starPoints[n][2];
+        startY = starPoints[n][1];
+        startZ = starPoints[n][2];
 
         //make a new list of the values we are interested in
-		double[] returnValues = new double[numStarIndex];
+        double[] returnValues = new double[numStarIndex];
 
         //initialize values to current star location
         returnValues[xIndex] = startX;
@@ -78,9 +54,9 @@ behavior Actress
         returnValues[zIndex] = startZ;
         returnValues[zMinIndex] = 0;
         returnValues[zMaxIndex] = 0;
-		returnValues[minIndex] = Double.MAX_VALUE;   //unlikely for this to be the longest
-		returnValues[maxIndex] = -1.0;               //impossible for this to be the shortest
-		returnValues[avgIndex] = 0.0;
+        returnValues[minIndex] = Double.MAX_VALUE;   //unlikely for this to be the longest
+        returnValues[maxIndex] = -1.0;               //impossible for this to be the shortest
+        returnValues[avgIndex] = 0.0;
 
 
         //calculate the min and max to the first star in the list
@@ -131,19 +107,20 @@ behavior Actress
         //return the results via message
         returnSelf(returnValues)@createArrayList(token)@currentContinuation;
 
-		//findMinMaxAvg(returnValues, n, starPoints)@getAvg(token, starPoints.length)@createArrayList(token)@currentContinuation;
-	}
+        //findMinMaxAvg(returnValues, n, starPoints)@getAvg(token, starPoints.length)@createArrayList(token)@currentContinuation;
+    }
 
-	ArrayList createArrayList(double[] a)
+    ArrayList createArrayList(double[] a)
     {
-		ArrayList returnValues = new ArrayList();
-		for (int i = 0; i < a.length; i++) returnValues.add(a[i]);
-		return returnValues;
-	}
+        ArrayList returnValues = new ArrayList();
+        for (int i = 0; i < a.length; i++) returnValues.add(a[i]);
+        return returnValues;
+    }
 
     double[] returnSelf(double[] returnValues)
     {
         return returnValues;
     }
 }
+
 
