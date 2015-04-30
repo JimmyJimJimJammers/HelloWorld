@@ -127,7 +127,7 @@ behavior Main
 			int x = 0;
 			while(x < numStars)
 			{
-				Actresses[x]<-findDistances(x, starPoints, numStars);
+            Actresses[x]<-findDistances(x, starPoints);
 				x++;
 			}
 		}@compareData(token);
