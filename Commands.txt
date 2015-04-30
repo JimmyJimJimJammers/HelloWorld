@@ -6,7 +6,7 @@ java -cp salsa1.1.5.jar:. sky.Analyzer sky/Smallestest.txt -c
 //MY CODE
 java -cp salsa1.1.5.jar:. salsac.SalsaCompiler Galaxy/*.salsa
 javac -cp salsa1.1.5.jar:. Galaxy/*.java
-java -cp salsa1.1.5.jar:. Galaxy.Main Galaxy/Smallestest.txt -c
+java -cp salsa1.1.5.jar:. Galaxy.Main Galaxy/solution.txt -c
 
 
 git add Galaxy/Actress.salsa Galaxy/Main.salsa Commands.txt Galaxy/Smallest.txt Galaxy/Smallestest.txt Galaxy/Small.txt Galaxy/solution.txt
@@ -32,4 +32,4 @@ java -cp salsa1.1.5.jar:. wwc.messaging.Theater 9003
 127.0.0.1.9003
 
 //run on terminal (n+1) with (This must be the last step)
-java -cp salsa1.1.5.jar:. Galaxy.Main Galaxy/Smallestest.txt 127.0.0.1 Galaxy/Ports.txt
+java -cp salsa1.1.5.jar:. Galaxy.Main Galaxy/solution.txt 127.0.0.1 Galaxy/Ports.txt

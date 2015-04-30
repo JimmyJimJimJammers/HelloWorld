@@ -133,7 +133,7 @@ behavior Main
 		}
 
 		// migrate Actresses to theaters
-		int looper = 0;                                    // ************************COME BACK TO HERE *********************
+		/*int looper = 0;                                    // ************************COME BACK TO HERE *********************
 		int x = 0;
 		while (looper < numStars)
 		{
@@ -141,10 +141,16 @@ behavior Main
 				x = 0;
 			standardOutput<-print("Sending Actress uan://" + serverName + ":3030/a"+ x +" to rmsp://" +theaters.get(x)+"/a"+x + "\n");
 
-			Actresses[x] = new Actress() at  (new UAN("uan://"+serverName+":3030/a"+x), new UAL("rmsp://"+theaters.get(x)+"/a"+x));
+			Actresses[x] = new Actress() at (new UAN("uan://"+serverName+":3030/a"+x), new UAL("rmsp://"+theaters.get(x)+"/a"+x));
 			x++;
-		}
-		
+		}*/
+        for (int i = 0; i < numStars; i++)
+        {
+            standardOutput<-println("Sending actor " + "uan://" + serverName + ":3030/a" + i + " to " + "rmsp://" + theaters.get(i%theaters.size()) + "/a" + i);
+
+            Actresses[i] = new Actress() at (new UAN("uan://" + serverName + ":3030/a" + i), new UAL("rmsp://" + theaters.get(i%theaters.size()) + "/a" + i));
+        }
+
 		standardOutput<-print("Program Start: \n");
 		startTime = System.currentTimeMillis();
 		
