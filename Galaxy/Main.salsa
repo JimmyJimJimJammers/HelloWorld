@@ -8,12 +8,13 @@ import java.util.*;
 
 behavior Main 
 {
-	String starsFile = "test.txt";   
+    String theatersFile = "theatersFile.txt";           
+    String starsFile = "test.txt";   
+    String serverName = "localhost";  
+
+    int numStars;
+    double[][] starPoints;
 	long startTime = 0;              
-	String serverName = "localhost";  
-	String theatersFile = "theatersFile.txt";           
-	int numStars;                        
-	double[][] starPoints;
 
 
 
@@ -43,10 +44,12 @@ behavior Main
         {
 
             BufferedReader bufferedReader = new BufferedReader(new FileReader(starsFile));
+            
             boolean duplicate = false;
             String tempStar = bufferedReader.readLine();
             numStars = Integer.parseInt(tempStar);
             starPoints = new double[numStars][3];
+
             String[] tempLines = new String[numStars];
             int temp = 0;
             int subtractNum = 0;
@@ -115,7 +118,7 @@ behavior Main
             int x = 0;
             while(x < numStars)
             {
-            Actresses[x]<-findDistances(x, starPoints);
+            Actresses[x]<-findDistances(x, starPoints); // function is located in Actress.salsa
                 x++;
             }
         }@compareData(token);
@@ -150,14 +153,17 @@ behavior Main
         while (looper < numStars)               /// send stuff to theaters
         {
             if (x == theaters.size())
+            {    
                 x = 0;
+            }
+
             standardOutput<-print("Sending Actress uan://" + serverName + ":3030/a"+ x +" to rmsp://" +theaters.get(x)+"/a"+x + "\n");
 
             Actresses[x] = new Actress() at (new UAN("uan://"+serverName+":3030/a"+x), new UAL("rmsp://"+theaters.get(x)+"/a"+x));
             x++;
         }
 
-        standardOutput<-print("Program Start: \n");
+        standardOutput<-print("****** Program stars here ****** \n");
         startTime = System.currentTimeMillis();
         
         //start computation using join method
@@ -173,21 +179,21 @@ behavior Main
     }
 
 
-    ArrayList[] removeDuplicates(ArrayList[] data) 
+    ArrayList[] removeDuplicates(ArrayList[] data) // checks to make sure that no two pairs are identical 
     {   
-        for (int x = 0; x < data[0].size(); x++ )
+        for (int x = 0; x < data[0].size(); x++ )   // check each pair with every other pair
         {
             //boolean removed = false;
             for (int y = x+1; y < data[0].size(); y++)
             {
-                if (((Double)data[0].get(x)).equals((Double)data[3].get(y)) &&
-                    ((Double)data[1].get(x)).equals((Double)data[4].get(y)) &&
-                    ((Double)data[2].get(x)).equals((Double)data[5].get(y)) &&
+                if (((Double)data[0].get(x)).equals((Double)data[3].get(y)) &&      // if the first element of the first pair 
+                    ((Double)data[1].get(x)).equals((Double)data[4].get(y)) &&      // is equal to the second element of the second pair
+                    ((Double)data[2].get(x)).equals((Double)data[5].get(y)) &&      // and vice versa
                     ((Double)data[3].get(x)).equals((Double)data[0].get(y)) &&
                     ((Double)data[4].get(x)).equals((Double)data[1].get(y)) &&
                     ((Double)data[5].get(x)).equals((Double)data[2].get(y)))
                 {
-                    for (int l = 0; l < 6; l++)
+                    for (int l = 0; l < 6; l++)     // remove the duplicate pair and decrement 
                     { 
                         data[l].remove(x);
                     }
@@ -363,7 +369,7 @@ behavior Main
 			}
 		}
 
-		ArrayList[] newClosestNeighbor = removeDuplicates(closestNeighbor);
+		ArrayList[] newClosestNeighbor = removeDuplicates(closestNeighbor);   // here we can check for duplicates
 		ArrayList[] newFarthestNeighbor = removeDuplicates(farthestNeighbor);
         long result = System.currentTimeMillis() - startTime;							// get the working time 
 
