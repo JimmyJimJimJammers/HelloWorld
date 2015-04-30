@@ -184,13 +184,6 @@ behavior Main
 		}@compareData(token);
 	}
 
-
-	void endTimer(){
-		long endTime = System.currentTimeMillis();
-		long result = endTime - startTime;
-		standardOutput<-print("Total time: " + result +" ms.\n");
-	}
-
     //takes the actressOutput from the Actresses and combines them
 	void compareData(Object[] actressOutput)
     {
