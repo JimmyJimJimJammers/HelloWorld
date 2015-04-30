@@ -16,47 +16,34 @@ behavior Main
 	double[][] starPoints;
 
 
-	int xIndex = 0;
-    int yIndex = 1;
-    int zIndex = 2;
-    int minIndex = 3;
-    int maxIndex = 4;
-    int xMinIndex = 5;
-    int yMinIndex = 6;
-    int zMinIndex = 7;
-    int xMaxIndex = 8;
-    int yMaxIndex = 9;
-    int zMaxIndex = 10;
-    int avgIndex = 11;
-    int numStarsIndex = 12; // used to encode the result of one actor with an array of doubles
 
-	void act(String [] argv)		// handle the user arguements
-	{
-			
-		if (argv[argv.length-1].equals("-c"))
-		{
-			starsFile = argv[0];
-            readInput()@SendtoActressesConcurrent();			// concurrent version
-		}
-		else 
-		{
-			if (argv.length == 3) 
-			{
-				starsFile = argv[0];
-				serverName = argv[1];
-				theatersFile = argv[2];
-			}
-			readInput()@SendtoActresses();			// distributive
-		}
-	}
+    void act(String [] argv)        // handle the user arguements
+    {
+            
+        if (argv[argv.length-1].equals("-c"))
+        {
+            starsFile = argv[0];
+            readInput()@SendtoActressesConcurrent();            // concurrent version
+        }
+        else 
+        {
+            if (argv.length == 3) 
+            {
+                starsFile = argv[0];
+                serverName = argv[1];
+                theatersFile = argv[2];
+            }
+            readInput()@SendtoActresses();          // distributive
+        }
+    }
 
-	void readInput()			// function to read input and remove duplicate lines
-	{
-		try 
-		{
+    void readInput()            // function to read input and remove duplicate lines
+    {
+        try 
+        {
 
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(starsFile));
-			boolean duplicate = false;
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(starsFile));
+            boolean duplicate = false;
             String tempStar = bufferedReader.readLine();
             numStars = Integer.parseInt(tempStar);
             starPoints = new double[numStars][3];
@@ -64,131 +51,178 @@ behavior Main
             int temp = 0;
             int subtractNum = 0;
             int i=0;
-			while ((tempStar = bufferedReader.readLine()) != null)
-			{
-				if (!tempStar.equalsIgnoreCase("")) 
-				{
-					// remove duplicates from a file using string comparison!!!
-               		for (int x =0; x < temp; x++)
-               		{
-               			if (tempLines[x].equals(tempStar))
-               			{
-               				subtractNum++;
-               				duplicate = true;		
-               			}
-               		}
-               		if (duplicate == true){
-               			duplicate = false;
-               			continue;
-               		}
+            while ((tempStar = bufferedReader.readLine()) != null)
+            {
+                if (!tempStar.equalsIgnoreCase("")) 
+                {
+                    // remove duplicates from a file using string comparison!!!
+                    for (int x =0; x < temp; x++)
+                    {
+                        if (tempLines[x].equals(tempStar))
+                        {
+                            subtractNum++;
+                            duplicate = true;       
+                        }
+                    }
+                    if (duplicate == true){
+                        duplicate = false;
+                        continue;
+                    }
 
-					String[] parts = tempStar.split(" ");
-                	if(parts.length > 1)
-                	{
-	                    starPoints[i][0] = Double.parseDouble(parts[0]);						// adding stars to 3D array of doubles
-	                    starPoints[i][1] = Double.parseDouble(parts[1]);
-	                    starPoints[i][2] = Double.parseDouble(parts[2]);
-               		}
-               		tempLines[temp] = tempStar;
-					temp++;
+                    String[] parts = tempStar.split(" ");
+                    if(parts.length > 1)
+                    {
+                        starPoints[i][0] = Double.parseDouble(parts[0]);                        // adding stars to 3D array of doubles
+                        starPoints[i][1] = Double.parseDouble(parts[1]);
+                        starPoints[i][2] = Double.parseDouble(parts[2]);
+                    }
+                    tempLines[temp] = tempStar;
+                    temp++;
 
-				}
-				i++;
-			}
+                }
+                i++;
+            }
 
-			numStars = numStars - subtractNum;	// number of duplicates removed
-			bufferedReader.close();
-		} 
-		catch (IOException ioe) 
-		{
-			standardOutput<-print("File Error: " + starsFile + "\n");
-		}
+            numStars = numStars - subtractNum;  // number of duplicates removed
+            bufferedReader.close();
+        } 
+        catch (IOException ioe) 
+        {
+            standardOutput<-print("File Error: " + starsFile + "\n");
+        }
 
-	}
+    }
 
-	//Concurrent version
-	void SendtoActressesConcurrent() {
+    //Concurrent version
+    void SendtoActressesConcurrent() {
 
-		//create Actresses and assign data
-		Actress[] Actresses = new Actress[numStars];
-		int t =0;
-		while (t < numStars)
-		{                                
-			Actresses[t] = new Actress();
-			t++;
-		}
+        //create Actresses and assign data
+        Actress[] Actresses = new Actress[numStars];
+        int t =0;
+        while (t < numStars)
+        {                                
+            Actresses[t] = new Actress();
+            t++;
+        }
 
-		
-		startTime = System.currentTimeMillis();
-		standardOutput<-print("Program Start: \n");	
+        
+        startTime = System.currentTimeMillis(); // get the current start time
 
-		join 																// Starting the computation
-		{
-			int x = 0;
-			while(x < numStars)
-			{
+        standardOutput<-print("****** Program starts here ******* \n"); 
+
+        join                                                                // Starting the computation
+        {
+            int x = 0;
+            while(x < numStars)
+            {
             Actresses[x]<-findDistances(x, starPoints);
-				x++;
-			}
-		}@compareData(token);
-	}
+                x++;
+            }
+        }@compareData(token);
+    }
 
-	void SendtoActresses() {				// distributed version 
+    void SendtoActresses() {                // distributed version 
 
-		//create Actresses and assign data
-		Actress[] Actresses = new Actress[numStars];
-		ArrayList theaters = new ArrayList();
-		String theater;
-		int u = 0;
-		while( u < numStars)
-		{                                   	// first create actresses
-			Actresses[u] = new Actress();
-			u++;
-		}
+        //create Actresses and assign data
+        Actress[] Actresses = new Actress[numStars];
+        ArrayList theaters = new ArrayList();
+        String theater;
+        int u = 0;
+        while( u < numStars)
+        {                                       // first create actresses
+            Actresses[u] = new Actress();
+            u++;
+        }
 
 
-		try {															// try to find theaters
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(theatersFile));
-			while ((theater = bufferedReader.readLine()) != null) {
-				theaters.add(theater);
-			}
-			bufferedReader.close(); 
-		} catch (IOException ioe){
-			standardOutput<-println("File Error: " + theatersFile);
-		}
+        try {                                                           // try to find theaters
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(theatersFile));
+            while ((theater = bufferedReader.readLine()) != null) {
+                theaters.add(theater);
+            }
+            bufferedReader.close(); 
+        } catch (IOException ioe){
+            standardOutput<-println("File Error: " + theatersFile);
+        }
 
-		int looper = 0;                                    
-		int x = 0;
-		while (looper < numStars)				/// send stuff to theaters
-		{
-			if (x == theaters.size())
-				x = 0;
-			standardOutput<-print("Sending Actress uan://" + serverName + ":3030/a"+ x +" to rmsp://" +theaters.get(x)+"/a"+x + "\n");
+        int looper = 0;                                    
+        int x = 0;
+        while (looper < numStars)               /// send stuff to theaters
+        {
+            if (x == theaters.size())
+                x = 0;
+            standardOutput<-print("Sending Actress uan://" + serverName + ":3030/a"+ x +" to rmsp://" +theaters.get(x)+"/a"+x + "\n");
 
-			Actresses[x] = new Actress() at (new UAN("uan://"+serverName+":3030/a"+x), new UAL("rmsp://"+theaters.get(x)+"/a"+x));
-			x++;
-		}
+            Actresses[x] = new Actress() at (new UAN("uan://"+serverName+":3030/a"+x), new UAL("rmsp://"+theaters.get(x)+"/a"+x));
+            x++;
+        }
 
-		standardOutput<-print("Program Start: \n");
-		startTime = System.currentTimeMillis();
-		
-		//start computation using join method
-		join 
-		{
-			int t =0;
-			while(t < numStars)
-			 {
-				Actresses[t]<-run(t, starPoints, numStars);
-				t++;
-			}
-		}@compareData(token);
-	}
+        standardOutput<-print("Program Start: \n");
+        startTime = System.currentTimeMillis();
+        
+        //start computation using join method
+        join 
+        {
+            int t =0;
+            while(t < numStars)
+             {
+                Actresses[t]<-run(t, starPoints, numStars);
+                t++;
+            }
+        }@compareData(token);
+    }
+
+
+    ArrayList[] removeDuplicates(ArrayList[] data) 
+    {   
+        for (int x = 0; x < data[0].size(); x++ )
+        {
+            //boolean removed = false;
+            for (int y = x+1; y < data[0].size(); y++)
+            {
+                if (((Double)data[0].get(x)).equals((Double)data[3].get(y)) &&
+                    ((Double)data[1].get(x)).equals((Double)data[4].get(y)) &&
+                    ((Double)data[2].get(x)).equals((Double)data[5].get(y)) &&
+                    ((Double)data[3].get(x)).equals((Double)data[0].get(y)) &&
+                    ((Double)data[4].get(x)).equals((Double)data[1].get(y)) &&
+                    ((Double)data[5].get(x)).equals((Double)data[2].get(y)))
+                {
+                    for (int l = 0; l < 6; l++)
+                    { 
+                        data[l].remove(x);
+                    }
+                    x--;
+                }
+            }
+        }
+        return data;
+    }
+
+    // index locations 
+	int xIndex = 0;
+    int yIndex = 1;
+    int zIndex = 2;
+
+    int minIndex = 3;
+    int maxIndex = 4;
+
+    int xMinIndex = 5;
+    int yMinIndex = 6;
+    int zMinIndex = 7;
+
+    int xMaxIndex = 8;
+    int yMaxIndex = 9;
+    int zMaxIndex = 10;
+
+    int avgIndex = 11;
+
+    int numStarsIndex = 12; // used to encode the result of one actor with an array of doubles
 
     //takes the actressOutput from the Actresses and combines them
-	void compareData(Object[] actressOutput)
+    void compareData(Object[] actressOutput)
     {
         //closest neighbours
-		double closestNeighborDist = Double.MAX_VALUE;
+        double closestNeighborDist = Double.MAX_VALUE;
         //farthest neighbours
         double farthestNeighborDist = 0.0;
         //minimum max distance **
@@ -329,15 +363,14 @@ behavior Main
 			}
 		}
 
-		token closestNeighborDup = removeDuplicates(closestNeighbor);
-		token farthestNeighborDup = removeDuplicates(farthestNeighbor);
-
+		ArrayList[] newClosestNeighbor = removeDuplicates(closestNeighbor);
+		ArrayList[] newFarthestNeighbor = removeDuplicates(farthestNeighbor);
         long result = System.currentTimeMillis() - startTime;							// get the working time 
 
-        standardOutput<-print("\nClosest Neighbor Distance: " + closestNeighborDist + "\n") @
-        printAllElements(closestNeighborDup, 6) @
+        standardOutput<-print("\nClosest Neighbor Distance: " + closestNeighborDist + "\n") @ 
+        printAllElements(newClosestNeighbor, 6) @
         standardOutput<-println("Farthest Neighbor Distance: " + farthestNeighborDist) @
-        printAllElements(farthestNeighborDup, 6) @
+        printAllElements(newFarthestNeighbor, 6) @
         standardOutput<-println("Minimum Farthest Star Distance (Ideal Hub): " + minFarthestStar) @
         printAllElements(idealHubStar, 3) @
         standardOutput<-println("Maximum Closest Star Distance (Ideal Jail): " + maxClosestStar) @
@@ -347,6 +380,7 @@ behavior Main
         standardOutput<-print("Completion Time: " + result + " ms.\n");
 
 	}
+
     void printAllElements(ArrayList[] outputStuff, int arraySize)
     {
         for(int i = 0; i < outputStuff[0].size(); i++)
@@ -370,32 +404,5 @@ behavior Main
             }
             standardOutput<-print("\n");
         }
-    }
-
-
-
-ArrayList[] removeDuplicates(ArrayList[] data) 
-    {	
-    	for (int x = 0; x < data[0].size(); x++ )
-    	{
-    		//boolean removed = false;
-    		for (int y = x+1; y < data[0].size(); y++)
-    		{
-    			if (((Double)data[0].get(x)).equals((Double)data[3].get(y)) &&
-    				((Double)data[1].get(x)).equals((Double)data[4].get(y)) &&
-    				((Double)data[2].get(x)).equals((Double)data[5].get(y)) &&
-    				((Double)data[3].get(x)).equals((Double)data[0].get(y)) &&
-    				((Double)data[4].get(x)).equals((Double)data[1].get(y)) &&
-    				((Double)data[5].get(x)).equals((Double)data[2].get(y)))
-    			{
-    				for (int l = 0; l < 6; l++)
-    				{ 
-    					data[l].remove(x);
-    				}
-    				x--;
-    			}
-    		}
-    	}
-    	return data;
     }
 }
