@@ -6,7 +6,7 @@ import java.util.*;
 // this handles all of the parallelization
 behavior Actress
 {
-    //this is what will run if we compile and run this file alone, it tests whether or not the methods work
+    //this is what will run if we compile and run this file alone
     void act(String args[])
     {
         //empty because we will never run this class alone.
@@ -33,8 +33,7 @@ behavior Actress
     int numStarIndex = 12; // used to encode the result of one worker with an array of doubles
 
     //take the nth star (using the processed file of stars) and find all of the requested values
-    //ArrayList calc(int n, String fileProcessed, int numStar)
-    ArrayList calc(int n, double[][] starPoints, int numStar)
+    ArrayList run(int n, double[][] starPoints, int numStar)
     {
         //get the locations values of the star we are currently interested in
         startX= starPoints[n][0];
