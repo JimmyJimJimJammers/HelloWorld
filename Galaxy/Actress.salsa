@@ -18,7 +18,6 @@ behavior Actress
     double startZ = 0.0;
 
     //take the nth star (using the processed file of stars) and find all of the requested values
-    //ArrayList calc(int n, String fileProcessed, int numStar)
     ArrayList findDistances(int n, double[][] starPoints)
     {
         //get the locations values of the star we are currently interested in
@@ -66,12 +65,10 @@ behavior Actress
         returnValues[avgIndex] = 0.0;
 
 
-        //calculate the min and max to the first star in the list
-        //token tokenReturnValues = findMinMaxAvg1(returnValues, starPoints[0]);
+        
         for (int i = 0; i < starPoints.length; i++) if (i != n)
         {
-            //calculate the min and max to the rest of the stars in the list
-            //tokenReturnValues = findMinMaxAvg1(tokenReturnValues, starPoints[i]);
+           
 
             //get the difference between this current star and the star passed to the method
             double xDist = startX-starPoints[i][0];
@@ -107,22 +104,30 @@ behavior Actress
             }
         }
 
-        returnValues[avgIndex] /= starPoints.length;
 
-        //standardOutput<-println("\nStar: (" + returnValues[xIndex] + ", " + returnValues[yIndex] + ", " + returnValues[zIndex] + ")\n\tMin: " + returnValues[minIndex] + "\n\tto: " + returnValues[xMinIndex] + " " + returnValues[yMinIndex] + " " + returnValues[zMinIndex] + "\n\tMax: " + returnValues[maxIndex] + "\n\tto: (" + returnValues[xMaxIndex] + ", " + returnValues[yMaxIndex] + ", " + returnValues[zMaxIndex] + ")\n\tAvg: " + returnValues[avgIndex]);
+
+        returnValues[avgIndex] /= starPoints.length;
 
         //return the results via message
         returnSelf(returnValues)@createArrayList(token)@currentContinuation;
 
-        //findMinMaxAvg(returnValues, n, starPoints)@getAvg(token, starPoints.length)@createArrayList(token)@currentContinuation;
+       
     }
 
     ArrayList createArrayList(double[] a)
     {
         ArrayList returnValues = new ArrayList();
-        for (int i = 0; i < a.length; i++) returnValues.add(a[i]);
+
+
+        for (int i = 0; i < a.length; i++)
+        {
+         returnValues.add(a[i]);
+        }
         return returnValues;
     }
+
+
+
 
     double[] returnSelf(double[] returnValues)
     {
