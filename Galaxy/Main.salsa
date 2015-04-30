@@ -39,8 +39,7 @@ behavior Main
 	double[][] starPoints;
 
 
-	// Change these into map form
-	// use strings for keys 
+	
 	int xIndex = 0;
     int yIndex = 1;
     int zIndex = 2;
