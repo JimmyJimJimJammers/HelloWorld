@@ -3,31 +3,6 @@ module Galaxy;
 import java.io.*;
 import java.util.*;
 
-/* Analyzer.salsa -- Parallel distance calculation rules
- *
- * Input: 
- *    1.  starsFile.txt, a stars text file with the first line giving the total number of stars in the file 
- *        followed by one line per star representing each star's three dimensions <x,y,z> as X Y Z. 
- *    2.  n, number of Actresses.
- *    3.  serverName, the name server
- *    4.  theatersFile.txt, a file containing theater locations
- *
- * Output:  
- *    1.  Closest neighbours, the set of pairs of stars that minimize pairwise distance.
- *    2.  Farthest neighbours, the set of pairs of stars that maximize pairwise distance.
- *    3.  Ideal hub stars, the set of stars which minimize the maximal distance to any other star.
- *    4.  Ideal jail stars, the set of stars which maximize the minimal distance to any other star.
- *    5.  Ideal capital stars, the set of stars which minimize the average distance to all other stars.
- *
- * Algorithm:
- *    1.  
- *    2.  
- *    3a. 
- *    3b. 
- *
- * Note:  
- *
- */
 
 behavior Main 
 {
