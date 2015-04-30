@@ -1,3 +1,5 @@
+// File Created by Colin Fortuner & Jim McCarthy
+
 module Galaxy;
 
 import java.io.*;
@@ -29,13 +31,13 @@ behavior Main
     int avgIndex = 11;
     int numStarsIndex = 12; // used to encode the result of one actor with an array of doubles
 
-	void act(String [] argv)
+	void act(String [] argv)		// handle the user arguements
 	{
 			
 		if (argv[argv.length-1].equalsIgnoreCase("-c"))
 		{
 			starsFile = argv[0];
-            readInput()@SendtoActressesC();
+            readInput()@SendtoActressesC();			// concurrent version
 		}
 		else 
 		{
@@ -45,11 +47,11 @@ behavior Main
 				serverName = argv[1];
 				theatersFile = argv[2];
 			}
-			readInput()@SendtoActresses();
+			readInput()@SendtoActresses();			// distributive
 		}
 	}
 
-	void readInput()
+	void readInput()			// function to read input and remove duplicate lines
 	{
 		try 
 		{
@@ -84,7 +86,7 @@ behavior Main
 					String[] parts = tempStar.split(" ");
                 	if(parts.length > 1)
                 	{
-	                    starPoints[i][0] = Double.parseDouble(parts[0]);
+	                    starPoints[i][0] = Double.parseDouble(parts[0]);						// adding stars to 3D array of doubles
 	                    starPoints[i][1] = Double.parseDouble(parts[1]);
 	                    starPoints[i][2] = Double.parseDouble(parts[2]);
                		}
@@ -106,7 +108,7 @@ behavior Main
 
 	}
 
-	void SendtoActresses() {
+	void SendtoActresses() {				// distributed version 
 
 		//create Actresses and assign data
 		Actress[] Actresses = new Actress[numStars];
@@ -403,7 +405,5 @@ behavior Main
             }
             standardOutput<-print("\n");
         }
-
-        //currentContinuation;
     }
 }
