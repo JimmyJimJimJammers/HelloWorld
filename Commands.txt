@@ -1,8 +1,3 @@
-//SOLUTION
-java -cp salsa1.1.5.jar:. salsac.SalsaCompiler sky/*.salsa
-javac -cp salsa1.1.5.jar:. sky/*.java
-java -cp salsa1.1.5.jar:. sky.Analyzer sky/Smallestest.txt -c
-
 //MY CODE
 java -cp salsa1.1.5.jar:. salsac.SalsaCompiler Galaxy/*.salsa
 javac -cp salsa1.1.5.jar:. Galaxy/*.java
@@ -13,8 +8,6 @@ git add Galaxy/Actress.salsa Galaxy/Main.salsa Commands.txt Galaxy/Smallest.txt 
 git commit -m “Changed_Files”
 git pull
 git push
-
-
 
 //start server (terminal 1)
 java -cp salsa1.1.5.jar:. wwc.naming.WWCNamingServer
