@@ -161,6 +161,7 @@ behavior Main
 
             Actresses[x] = new Actress() at (new UAN("uan://"+serverName+":3030/a"+x), new UAL("rmsp://"+theaters.get(x)+"/a"+x));
             x++;
+            looper++;
         }
 
         standardOutput<-print("****** Program stars here ****** \n");
@@ -172,7 +173,7 @@ behavior Main
             int t =0;
             while(t < numStars)
              {
-                Actresses[t]<-run(t, starPoints, numStars);
+                Actresses[t]<-findDistances(t, starPoints);
                 t++;
             }
         }@compareData(token);
