@@ -69,13 +69,13 @@ behavior Actress
 		double[] returnValues = new double[numStarIndex];
 
         //initialize values to current star location
-        returnValues[xIndex] = 0;
+        returnValues[xIndex] = startX;
         returnValues[xMinIndex] = 0;
         returnValues[xMaxIndex] = 0;
-        returnValues[yIndex] = 0;
+        returnValues[yIndex] = startY;
         returnValues[yMinIndex] = 0;
         returnValues[yMaxIndex] = 0;
-        returnValues[zIndex] = 0;
+        returnValues[zIndex] = startZ;
         returnValues[zMinIndex] = 0;
         returnValues[zMaxIndex] = 0;
 		returnValues[minIndex] = Double.MAX_VALUE;   //unlikely for this to be the longest

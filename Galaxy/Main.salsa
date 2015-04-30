@@ -200,14 +200,23 @@ behavior Main
 		standardOutput<-print("Total time: " + result +" ms.\n");
 	}
 
-	void summarize(Object[] results) {
-
-		double cndis = Double.MAX_VALUE; // closest neighbour distance
-		ArrayList[] cn = new ArrayList[6]; // closest neighbour pairs
+    //takes the results from the Actresses and combines them
+	void summarize(Object[] results)
+    {
+        // closest neighbour distance
+		double cndis = Double.MAX_VALUE;
+        //for holding the each star and it's closest neighbor
+		ArrayList[] cn = new ArrayList[6];
+        //go through and make an ArrayList for each coordinate?
 		for (int i = 0; i < 6; i++) cn[i] = new ArrayList();
-		double fndis = 0.0; // farthest neighbour distance
-		ArrayList[] fn = new ArrayList[6]; // farthest neighbour pairs
+
+        //farthest neighbour distance
+		double fndis = 0.0;
+        // farthest neighbour pairs
+		ArrayList[] fn = new ArrayList[6];
+        //go through each star and
 		for (int i = 0; i < 6; i++) fn[i] = new ArrayList();
+
 		double minmaxdis = Double.MAX_VALUE; // minimum max distance
 		ArrayList[] ihs = new ArrayList[6]; // ideal hub stars
 		for (int i = 0; i < 6; i++) ihs[i] = new ArrayList();
@@ -219,7 +228,8 @@ behavior Main
 		for (int i = 0; i < 3; i++) ics[i] = new ArrayList();
 
 		//standardOutput<-println("summing...");
-		for (int i = 0; i < numStar; i++){
+		for (int i = 0; i < numStar; i++)
+        {
 			double rmin = (Double)((ArrayList)results[i]).get(minIndex);
 			double rmax = (Double)((ArrayList)results[i]).get(maxIndex);
 			double ravg = (Double)((ArrayList)results[i]).get(avgIndex);
