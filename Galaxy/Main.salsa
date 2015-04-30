@@ -16,7 +16,6 @@ behavior Main
 	double[][] starPoints;
 
 
-	
 	int xIndex = 0;
     int yIndex = 1;
     int zIndex = 2;

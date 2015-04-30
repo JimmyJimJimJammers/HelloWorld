@@ -33,3 +33,5 @@ java -cp salsa1.1.5.jar:. wwc.messaging.Theater 9003
 
 //run on terminal (n+1) with (This must be the last step)
 java -cp salsa1.1.5.jar:. Galaxy.Main Galaxy/solution.txt 127.0.0.1 Galaxy/Ports.txt
+
+java -cp salsa1.1.5.jar:. sky.Analyzer sky/Smallestest.txt 127.0.0.1 sky/Ports.txt
