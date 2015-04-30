@@ -9,7 +9,7 @@ javac -cp salsa1.1.5.jar:. Galaxy/*.java
 java -cp salsa1.1.5.jar:. Galaxy.Main Galaxy/Smallestest.txt -c
 
 
-git add Galaxy/Actress.salsa Galaxy/Main.salsa Commands.txt Galaxy/Smallest.txt Galaxy/Smallestest.txt Galaxy/Small.txt solution.txt
+git add Galaxy/Actress.salsa Galaxy/Main.salsa Commands.txt Galaxy/Smallest.txt Galaxy/Smallestest.txt Galaxy/Small.txt Galaxy/solution.txt
 git commit -m “Changed Files”
 git pull
 git push
