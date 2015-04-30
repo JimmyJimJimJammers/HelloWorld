@@ -17,21 +17,6 @@ behavior Actress
     double startY = 0.0;
     double startZ = 0.0;
 
-    //these are the index locations of the return values in the array returnValues
-    int xIndex = 0;
-    int yIndex = 1;
-    int zIndex = 2;
-    int minIndex = 3;
-    int maxIndex = 4;
-    int xMinIndex = 5;
-    int yMinIndex = 6;
-    int zMinIndex = 7;
-    int xMaxIndex = 8;
-    int yMaxIndex = 9;
-    int zMaxIndex = 10;
-    int avgIndex = 11;
-    int numStarIndex = 12; // used to encode the result of one worker with an array of doubles
-
     //take the nth star (using the processed file of stars) and find all of the requested values
     //ArrayList calc(int n, String fileProcessed, int numStar)
     ArrayList findDistances(int n, double[][] starPoints)
@@ -40,6 +25,28 @@ behavior Actress
         startX= starPoints[n][0];
         startY = starPoints[n][1];
         startZ = starPoints[n][2];
+
+
+        //these are the index locations of the return values in the array returnValues
+        int xIndex = 0;
+        int yIndex = 1;
+        int zIndex = 2;
+
+        int minIndex = 3;
+        int maxIndex = 4;
+
+        int xMinIndex = 5;
+        int yMinIndex = 6;
+        int zMinIndex = 7;
+
+        int xMaxIndex = 8;
+        int yMaxIndex = 9;
+        int zMaxIndex = 10;
+
+        int avgIndex = 11;
+        
+        int numStarIndex = 12; // used to encode the result of one worker with an array of doubles
+
 
         //make a new list of the values we are interested in
         double[] returnValues = new double[numStarIndex];
