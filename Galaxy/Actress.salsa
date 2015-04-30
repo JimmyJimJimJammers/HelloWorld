@@ -1,4 +1,4 @@
-
+// File Created by Colin Fortuner & Jim McCarthy
 module Galaxy;
 import java.io.*;
 import java.util.*;

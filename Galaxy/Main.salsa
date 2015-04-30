@@ -1,46 +1,22 @@
+// File Created by Colin Fortuner & Jim McCarthy
+
 module Galaxy;
 
 import java.io.*;
 import java.util.*;
 
-/* Analyzer.salsa -- Parallel distance calculation rules
- *
- * Input: 
- *    1.  starsFile.txt, a stars text file with the first line giving the total number of stars in the file 
- *        followed by one line per star representing each star's three dimensions <x,y,z> as X Y Z. 
- *    2.  n, number of Actresses.
- *    3.  serverName, the name server
- *    4.  theatersFile.txt, a file containing theater locations
- *
- * Output:  
- *    1.  Closest neighbours, the set of pairs of stars that minimize pairwise distance.
- *    2.  Farthest neighbours, the set of pairs of stars that maximize pairwise distance.
- *    3.  Ideal hub stars, the set of stars which minimize the maximal distance to any other star.
- *    4.  Ideal jail stars, the set of stars which maximize the minimal distance to any other star.
- *    5.  Ideal capital stars, the set of stars which minimize the average distance to all other stars.
- *
- * Algorithm:
- *    1.  
- *    2.  
- *    3a. 
- *    3b. 
- *
- * Note:  
- *
- */
 
 behavior Main 
 {
-	String starsFile = "test.txt";    // Stars file
-	long startTime = 0;                 // Starting Time
-	String serverName = "localhost";  // Name Server
-	String theatersFile = "theatersFile.txt";    // File containing the theaters          
-	int numStars;                        // number of different stars
+	String starsFile = "test.txt";   
+	long startTime = 0;              
+	String serverName = "localhost";  
+	String theatersFile = "theatersFile.txt";           
+	int numStars;                        
 	double[][] starPoints;
 
 
-	// Change these into map form
-	// use strings for keys 
+	
 	int xIndex = 0;
     int yIndex = 1;
     int zIndex = 2;
@@ -55,14 +31,13 @@ behavior Main
     int avgIndex = 11;
     int numStarsIndex = 12; // used to encode the result of one actor with an array of doubles
 
-	void act(String [] argv)
+	void act(String [] argv)		// handle the user arguements
 	{
 			
 		if (argv[argv.length-1].equalsIgnoreCase("-c"))
 		{
-			standardOutput<-print("WE Made it!");
 			starsFile = argv[0];
-            removeDuplicates()@SendtoActressesC();
+            readInput()@SendtoActressesC();			// concurrent version
 		}
 		else 
 		{
@@ -72,53 +47,68 @@ behavior Main
 				serverName = argv[1];
 				theatersFile = argv[2];
 			}
-			removeDuplicates()@SendtoActresses();
+			readInput()@SendtoActresses();			// distributive
 		}
 	}
 
-	/** Deduplicate the stars file, return the name of the deduplicated file */
-		void removeDuplicates()
+	void readInput()			// function to read input and remove duplicate lines
+	{
+		try 
 		{
 
-			TreeSet starSet = new TreeSet();
-			try 
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(starsFile));
+			boolean duplicate = false;
+            String tempStar = bufferedReader.readLine();
+            numStars = Integer.parseInt(tempStar);
+            starPoints = new double[numStars][3];
+            String[] tempLines = new String[numStars];
+            int temp = 0;
+            int subtractNum = 0;
+            int i=0;
+			while ((tempStar = bufferedReader.readLine()) != null)
 			{
-
-				BufferedReader bufferedReader = new BufferedReader(new FileReader(starsFile));
-				String tempStar;
-	            tempStar = bufferedReader.readLine();
-	            numStars = Integer.parseInt(tempStar);
-	            starPoints = new double[numStars][3];
-	            int i=0;
-				while ((tempStar = bufferedReader.readLine()) != null)
+				if (!tempStar.equalsIgnoreCase("")) 
 				{
-					if (!tempStar.equalsIgnoreCase("")) 
-					{
-						starSet.add(tempStar);
-						//standardOutput<-println(">> " + tempStar);
+					// remove duplicates
+               		for (int x =0; x < temp; x++)
+               		{
+               			if (tempLines[x].equals(tempStar))
+               			{
+               				subtractNum++;
+               				duplicate = true;		
+               			}
+               		}
+               		if (duplicate == true){
+               			duplicate = false;
+               			continue;
+               		}
 
-						String[] parts = tempStar.split(" ");
-	                	if(parts.length > 1)
-	                	{
-	                    starPoints[i][0] = Double.parseDouble(parts[0]);
+					String[] parts = tempStar.split(" ");
+                	if(parts.length > 1)
+                	{
+	                    starPoints[i][0] = Double.parseDouble(parts[0]);						// adding stars to 3D array of doubles
 	                    starPoints[i][1] = Double.parseDouble(parts[1]);
 	                    starPoints[i][2] = Double.parseDouble(parts[2]);
-	               		}
-					}
-					i++;
-				}
+               		}
+               		tempLines[temp] = tempStar;
+               		
+					temp++;
 
-				bufferedReader.close();
-			} 
-			catch (IOException ioe) 
-			{
-				standardOutput<-print("File Error: " + starsFile + "\n");
+				}
+				i++;
 			}
 
+			numStars = numStars - subtractNum;	// number of duplicates removed
+			bufferedReader.close();
+		} 
+		catch (IOException ioe) 
+		{
+			standardOutput<-print("File Error: " + starsFile + "\n");
 		}
 
-	/** Distribute to the Actresses based on the deduplicated stars file for distributed computation */
-	void SendtoActresses() {
+	}
+
+	void SendtoActresses() {				// distributed version 
 
 		//create Actresses and assign data
 		Actress[] Actresses = new Actress[numStars];
@@ -348,8 +338,8 @@ behavior Main
 			}
 		}
 
-		token closestNeighborDup = dedupPair(closestNeighbor);
-		token farthestNeighborDup = dedupPair(farthestNeighbor);
+		ArrayList[] closestNeighborDup = closestNeighbor;
+		ArrayList[] farthestNeighborDup = farthestNeighbor;
 
         long result = System.currentTimeMillis() - startTime;
 
@@ -389,35 +379,5 @@ behavior Main
             }
             standardOutput<-print("\n");
         }
-
-        //currentContinuation;
     }
-
-
-	ArrayList[] dedupPair(ArrayList[] pairs) {
-		for (int i = 1; i < pairs[0].size(); ) {
-			boolean removed = false;
-			for (int j = 0; j < i; j++) {
-				double i0 = (Double)pairs[0].get(i);
-				double i1 = (Double)pairs[1].get(i);
-				double i2 = (Double)pairs[2].get(i);
-				double i3 = (Double)pairs[3].get(i);
-				double i4 = (Double)pairs[4].get(i);
-				double i5 = (Double)pairs[5].get(i);
-				double j0 = (Double)pairs[0].get(j);
-				double j1 = (Double)pairs[1].get(j);
-				double j2 = (Double)pairs[2].get(j);
-				double j3 = (Double)pairs[3].get(j);
-				double j4 = (Double)pairs[4].get(j);
-				double j5 = (Double)pairs[5].get(j);
-				if (i0 == j3 && i1 == j4 && i2 == j5 && i3 == j0 && i4 == j1 && i5 == j2) {
-					for (int k = 0; k < 6; k++) pairs[k].remove(i);
-					removed = true;
-					break;
-				}
-			}
-			if (!removed) i++;
-		}
-		return pairs;
-	}
 }
